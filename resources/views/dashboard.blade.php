@@ -73,9 +73,11 @@
         </div>
         <div class="p-4 border-t border-border-light dark:border-border-dark">
             <button class="flex w-full cursor-pointer items-center justify-center rounded-lg bg-primary py-2.5 text-[#111814] text-sm font-bold shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]">
+            <a href="{{ route('transactions.create') }}" class="flex w-full cursor-pointer items-center justify-center rounded-lg bg-primary py-2.5 text-[#111814] text-sm font-bold shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]">
                 <span class="material-symbols-outlined mr-2 text-[20px]">add_circle</span>
                 <span>Add Transaction</span>
             </button>
+            </a>
         </div>
     </aside>
     <!-- Main Content -->
@@ -110,8 +112,10 @@
                         <span class="material-symbols-outlined text-primary bg-primary/10 rounded-full p-1 text-[20px]">trending_up</span>
                     </div>
                     <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM 12,500.00</p>
+                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($totalIncome, 2) }}</p>
                     <div class="mt-2 flex items-center gap-2 text-xs">
                         <span class="font-medium text-green-600 dark:text-green-400">+12%</span>
+                        <span class="font-medium text-green-600 dark:text-green-400">--</span>
                         <span class="text-text-muted dark:text-gray-500">vs last month</span>
                     </div>
                 </div>
@@ -122,10 +126,12 @@
                         <span class="material-symbols-outlined text-red-500 bg-red-500/10 rounded-full p-1 text-[20px]">trending_down</span>
                     </div>
                     <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM 4,200.00</p>
+                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($totalExpenses, 2) }}</p>
                     <div class="mt-2 flex items-center gap-2 text-xs">
                         <span class="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/30 px-2 py-0.5 font-medium text-green-700 dark:text-green-400">
                             <span class="material-symbols-outlined text-[14px]">verified</span>
                             RM 1,200 Deductible
+                            Tax Deductible
                         </span>
                     </div>
                 </div>
@@ -136,8 +142,10 @@
                         <span class="material-symbols-outlined text-text-main dark:text-white bg-gray-100 dark:bg-white/10 rounded-full p-1 text-[20px]">account_balance_wallet</span>
                     </div>
                     <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM 8,300.00</p>
+                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($balance, 2) }}</p>
                     <div class="mt-2 flex items-center gap-2 text-xs">
                         <span class="font-medium text-green-600 dark:text-green-400">+8%</span>
+                        <span class="font-medium text-green-600 dark:text-green-400">--</span>
                         <span class="text-text-muted dark:text-gray-500">stable growth</span>
                     </div>
                 </div>
@@ -148,8 +156,10 @@
                         <span class="material-symbols-outlined text-primary bg-primary/10 rounded-full p-1 text-[20px]">savings</span>
                     </div>
                     <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM 450.00</p>
+                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($estTaxSavings, 2) }}</p>
                     <div class="mt-2 flex items-center gap-2 text-xs">
                         <span class="font-medium text-green-600 dark:text-green-400">+2%</span>
+                        <span class="font-medium text-green-600 dark:text-green-400">--</span>
                         <span class="text-text-muted dark:text-gray-500">optimization</span>
                     </div>
                 </div>
@@ -365,6 +375,31 @@
                                     </td>
                                     <td class="px-6 py-4 text-right font-bold text-text-main dark:text-white">- RM 180.00</td>
                                 </tr>
+                                @forelse($transactions as $transaction)
+                                    <tr class="group hover:bg-background-light dark:hover:bg-white/5">
+                                        <td class="px-6 py-4">
+                                            <p class="font-bold text-text-main dark:text-white">{{ $transaction->description }}</p>
+                                            <p class="text-xs text-text-muted dark:text-gray-400">{{ $transaction->category }} • {{ $transaction->date->format('d M') }}</p>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
+                                            @if($transaction->is_deductible)
+                                            <div class="flex justify-center">
+                                                <span class="inline-flex items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-900/20 px-2.5 py-0.5 text-xs font-medium text-blue-600 dark:text-blue-400" title="Tax Deductible">
+                                                    <span class="material-symbols-outlined text-[12px]">verified</span>
+                                                    Deductible
+                                                </span>
+                                            </div>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 text-right font-bold {{ $transaction->type == 'income' ? 'text-green-600 dark:text-green-400' : 'text-text-main dark:text-white' }}">
+                                            {{ $transaction->type == 'income' ? '+' : '-' }} RM {{ number_format($transaction->amount, 2) }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-4 text-center text-text-muted">No transactions found for this month.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
