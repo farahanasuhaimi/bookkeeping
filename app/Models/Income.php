@@ -15,6 +15,9 @@ class Income extends Model
         'date',
         'status',
         'notes',
+        'category_id',
+        'pcb_amount',
+        'attachment',
     ];
 
     protected $casts = [

@@ -26,6 +26,8 @@ class TransactionController extends Controller
             'date' => 'required|date',
             'is_deductible' => 'boolean',
             'notes' => 'nullable|string',
+            'pcb_amount' => 'nullable|numeric|min:0',
+            'attachment' => 'nullable|file|max:10240', // Max 10MB
         ]);
 
         try {
@@ -38,7 +40,14 @@ class TransactionController extends Controller
                     'source' => $validated['description'], // Use description as source
                     'status' => 'confirmed',
                     'notes' => $validated['notes'] ?? null,
+                    'category_id' => $validated['category_id'] ?? null,
+                    'pcb_amount' => $validated['pcb_amount'] ?? null,
                 ]);
+
+                if ($request->hasFile('attachment')) {
+                    $path = $request->file('attachment')->store('attachments', 'public');
+                    $transaction->update(['attachment' => $path]);
+                }
             } else {
                 $transaction = Expense::create([
                     'user_id' => $user->id,
@@ -51,19 +60,33 @@ class TransactionController extends Controller
                     'is_deductible' => $validated['is_deductible'] ?? false,
                     'notes' => $validated['notes'] ?? null,
                 ]);
+
+                if ($request->hasFile('attachment')) {
+                    $path = $request->file('attachment')->store('attachments', 'public');
+                    $transaction->update(['receipt_url' => $path]);
+                }
             }
 
-            return response()->json([
-                'success' => true,
-                'message' => ucfirst($validated['type']) . ' recorded successfully!',
-                'transaction' => $transaction,
-            ], 201);
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => ucfirst($validated['type']) . ' recorded successfully!',
+                    'transaction' => $transaction,
+                ], 201);
+            }
+
+            return redirect()->route('dashboard')->with('success', ucfirst($validated['type']) . ' recorded successfully!');
         } catch (\Exception $e) {
             Log::error('Transaction save error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to save transaction: ' . $e->getMessage(),
-            ], 500);
+            
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to save transaction: ' . $e->getMessage(),
+                ], 500);
+            }
+
+            return back()->withInput()->with('error', 'Failed to save transaction: ' . $e->getMessage());
         }
     }
 
