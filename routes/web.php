@@ -33,9 +33,6 @@ Route::middleware('auth')->group(function () {
 
     // New routes
     Route::get('/income', [IncomeController::class, 'index'])->name('income');
-    Route::get('/income/create', [IncomeController::class, 'create'])->name('income.create');
-    Route::post('/income', [IncomeController::class, 'store'])->name('income.store');
-    Route::delete('/income/{id}', [IncomeController::class, 'destroy'])->name('income.destroy');
     Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses');
     Route::get('/tax-summary', [TaxSummaryController::class, 'index'])->name('tax-summary');
 });
