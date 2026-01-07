@@ -28,15 +28,6 @@ class IncomeController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        Income::create([
-            'user_id' => Auth::id(),
-            'description' => $validated['description'],
-            'amount' => $validated['amount'],
-            'date' => $validated['date'],
-            'source' => $validated['description'],
-            'status' => 'confirmed',
-            'notes' => $validated['notes'] ?? null,
-        ]);
         try {
             Income::create([
                 'user_id' => Auth::id(),
@@ -48,7 +39,6 @@ class IncomeController extends Controller
                 'notes' => $validated['notes'] ?? null,
             ]);
 
-        return redirect()->back()->with('success', 'Income added successfully.');
             return redirect()->back()->with('success', 'Income added successfully.');
         } catch (\Exception $e) {
             Log::error('Income save error: ' . $e->getMessage());

@@ -9,29 +9,24 @@ class Expense extends Model
 {
     protected $fillable = [
         'user_id',
-        'category_id',
         'description',
         'amount',
+        'category_id',
         'date',
-        'payment_method',
         'status',
-        'receipt_url',
-        'is_deductible',
         'notes',
+        'is_deductible',
+        'attachment',
     ];
 
     protected $casts = [
         'date' => 'date',
         'amount' => 'decimal:2',
+        'is_deductible' => 'boolean',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class);
     }
 }

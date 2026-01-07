@@ -2,136 +2,127 @@
 
 @section('dashboard-content')
 <div class="flex h-screen w-full overflow-hidden">
-    <!-- Main Content Wrapper -->
-    <div class="flex flex-1 flex-col h-full overflow-hidden relative">
-        <!-- Scrollable Page Content -->
-        <main class="flex-1 overflow-y-auto p-4 lg:p-10 scroll-smooth">
-            <div class="max-w-5xl mx-auto space-y-6">
-                <!-- Breadcrumbs -->
-                <div class="flex items-center gap-2 text-sm">
-                    <a class="text-[#618975] dark:text-slate-400 hover:text-primary font-medium transition-colors" href="#">Home</a>
-                    <span class="text-slate-300 dark:text-slate-600">/</span>
-                    <a class="text-[#618975] dark:text-slate-400 hover:text-primary font-medium transition-colors" href="#">Expenses</a>
-                    <span class="text-slate-300 dark:text-slate-600">/</span>
-                    <span class="text-[#111814] dark:text-white font-medium">Add New</span>
-                </div>
-                <!-- Page Heading -->
-                <div class="flex flex-col gap-2">
-                    <h1 class="text-3xl lg:text-4xl font-black tracking-tight text-[#111814] dark:text-white">Record New Expense</h1>
-                    <p class="text-[#618975] dark:text-slate-400 text-base max-w-2xl">
-                        Enter details for your business expenditure. Ensure tax details are accurate for LHDN reporting.
-                    </p>
-                </div>
-                <!-- Form Card -->
-                <div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
-                    <!-- Form Header (Optional) -->
-                    <div class="px-6 py-4 border-b border-border-light dark:border-border-dark bg-slate-50/50 dark:bg-white/5 flex justify-between items-center">
-                        <h3 class="font-semibold text-lg">Expense Details</h3>
-                        <span class="text-xs font-medium px-2 py-1 rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200">Draft</span>
+    <!-- Main Content -->
+    <div class="flex flex-col flex-1 h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
+        <!-- Main Scrollable Area -->
+        <main class="flex-1 overflow-y-auto no-scrollbar p-4 md:p-8 lg:px-12 xl:px-24">
+            <form action="{{ route('transactions.store') }}" method="POST" enctype="multipart/form-data" class="max-w-4xl mx-auto flex flex-col gap-6">
+                @csrf
+                <input type="hidden" name="type" value="expense">
+                <!-- PageHeading -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="flex flex-col gap-2">
+                        <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-text-secondary-light dark:text-text-secondary-dark text-sm hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-sm">arrow_back</span>
+                            <span>Back to Dashboard</span>
+                        </a>
+                        <h1 class="text-text-primary-light dark:text-text-primary-dark text-3xl md:text-4xl font-black tracking-tight">Add New Expense</h1>
+                        <p class="text-text-secondary-light dark:text-text-secondary-dark text-base">Record your business expenses for tax deductions.</p>
                     </div>
-                    <div class="p-6 lg:p-8 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                        <!-- Amount -->
-                        <div class="flex flex-col gap-2">
-                            <label class="text-sm font-semibold text-[#111814] dark:text-slate-200">Amount (MYR) <span class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span class="text-slate-500 font-medium">RM</span>
-                                </div>
-                                <input class="w-full pl-10 pr-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-slate-900 text-[#111814] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="0.00" step="0.01" type="number"/>
-                            </div>
-                        </div>
-                        <!-- Date -->
-                        <div class="flex flex-col gap-2">
-                            <label class="text-sm font-semibold text-[#111814] dark:text-slate-200">Date of Transaction <span class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <input class="w-full pl-4 pr-10 py-3 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-slate-900 text-[#111814] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all [color-scheme:light] dark:[color-scheme:dark]" type="date"/>
-                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <span class="material-symbols-outlined text-slate-400">calendar_today</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Category -->
-                        <div class="flex flex-col gap-2">
-                            <label class="text-sm font-semibold text-[#111814] dark:text-slate-200">Expense Category <span class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <select class="w-full pl-4 pr-10 py-3 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-slate-900 text-[#111814] dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none transition-all">
-                                    <option disabled="" selected="" value="">Select a category</option>
-                                    <option value="office">Office Supplies</option>
-                                    <option value="travel">Travel &amp; Transport</option>
-                                    <option value="meals">Meals &amp; Entertainment</option>
-                                    <option value="utilities">Utilities</option>
-                                    <option value="rent">Rent</option>
-                                    <option value="marketing">Marketing</option>
-                                </select>
-                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                    <span class="material-symbols-outlined text-slate-400">expand_more</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Vendor -->
-                        <div class="flex flex-col gap-2">
-                            <label class="text-sm font-semibold text-[#111814] dark:text-slate-200">Vendor / Payee</label>
-                            <div class="relative">
-                                <input class="w-full pl-4 pr-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-slate-900 text-[#111814] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="e.g. TNB, Grab, Shopee" type="text"/>
-                            </div>
-                        </div>
-                        <!-- Description (Full width) -->
-                        <div class="flex flex-col gap-2 md:col-span-2">
-                            <label class="text-sm font-semibold text-[#111814] dark:text-slate-200">Description</label>
-                            <textarea class="w-full p-4 rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-slate-900 text-[#111814] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none transition-all" placeholder="Enter additional details regarding this expense..." rows="3"></textarea>
-                        </div>
-                        <!-- Tax Compliance Section (Full width) -->
-                        <div class="md:col-span-2 mt-2">
-                            <div class="rounded-xl border border-primary/30 bg-primary/5 dark:bg-primary/10 p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center transition-colors">
-                                <div class="relative flex items-center">
-                                    <input class="peer h-6 w-6 cursor-pointer appearance-none rounded border border-primary text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-all checked:bg-primary checked:border-transparent" id="tax-deductible" type="checkbox"/>
-                                    <span class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100 material-symbols-outlined text-lg font-bold">check</span>
-                                </div>
-                                <div class="flex-1">
-                                    <label class="block text-base font-bold text-[#111814] dark:text-white cursor-pointer" for="tax-deductible">
-                                        Tax-Deductible Expense (Qualifying Expenditure)
-                                    </label>
-                                    <p class="text-sm text-[#618975] dark:text-slate-400 mt-1">
-                                        Check this if this expense qualifies for tax deduction under <span class="font-medium text-slate-800 dark:text-slate-200">Income Tax Act 1967</span>.
-                                    </p>
-                                </div>
-                                <div class="hidden sm:block">
-                                    <span class="material-symbols-outlined text-primary text-4xl opacity-50">verified_user</span>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Receipt Upload (Full width) -->
-                        <div class="md:col-span-2">
-                            <label class="text-sm font-semibold text-[#111814] dark:text-slate-200 mb-2 block">Receipt / Invoice</label>
-                            <div class="border-2 border-dashed border-border-light dark:border-border-dark hover:border-primary dark:hover:border-primary rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer bg-slate-50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 transition-all group">
-                                <div class="bg-white dark:bg-slate-800 p-3 rounded-full shadow-sm mb-3 group-hover:scale-110 transition-transform duration-200">
-                                    <span class="material-symbols-outlined text-3xl text-primary">cloud_upload</span>
-                                </div>
-                                <p class="text-sm font-medium text-[#111814] dark:text-white">Click to upload or drag and drop</p>
-                                <p class="text-xs text-[#618975] dark:text-slate-500 mt-1">PDF, PNG, JPG up to 10MB</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Action Bar -->
-                    <div class="px-6 py-5 bg-slate-50 dark:bg-slate-900 border-t border-border-light dark:border-border-dark flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
-                        <button class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
-                            Cancel
-                        </button>
-                        <button class="px-6 py-2.5 rounded-lg text-sm font-bold text-primary border border-primary hover:bg-primary/10 transition-colors">
-                            Save &amp; Add Another
-                        </button>
-                        <button class="px-6 py-2.5 rounded-lg text-sm font-bold bg-primary text-[#111814] hover:bg-primary-hover shadow-sm hover:shadow transition-all flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-lg">save</span>
-                            Save Expense
-                        </button>
+                    <div class="flex gap-3">
+                        <a href="{{ route('dashboard') }}" class="px-4 py-2 rounded-lg border border-border-light dark:border-border-dark text-text-primary-light dark:text-text-primary-dark font-medium hover:bg-background-light dark:hover:bg-background-dark transition-colors text-center">Cancel</a>
+                        <button type="submit" class="px-6 py-2 rounded-lg bg-primary text-[#064e2a] font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark hover:text-white transition-all transform hover:-translate-y-0.5">Save Expense</button>
                     </div>
                 </div>
-                <!-- Helper Links -->
-                <div class="flex justify-center gap-6 pt-4 pb-8">
-                    <a class="text-xs text-[#618975] dark:text-slate-500 hover:text-primary underline" href="#">LHDN Tax Guidelines</a>
-                    <a class="text-xs text-[#618975] dark:text-slate-500 hover:text-primary underline" href="#">Expense Categories Help</a>
+                <!-- Form Container -->
+                <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-border-light dark:border-border-dark p-6 md:p-8">
+                    <!-- Category Section -->
+                    <div class="mb-8">
+                        <label class="text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-3 block">Expense Category</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <!-- Option 1: Office -->
+                            <label class="relative flex flex-col items-center gap-3 p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:has-[:checked]:bg-primary/10">
+                                <input class="peer sr-only" name="category_id" type="radio" value="3" required/>
+                                <div class="size-10 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                                    <span class="material-symbols-outlined">desk</span>
+                                </div>
+                                <span class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm">Office</span>
+                            </label>
+                            <!-- Option 2: Transport -->
+                            <label class="relative flex flex-col items-center gap-3 p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:has-[:checked]:bg-primary/10">
+                                <input class="peer sr-only" name="category_id" type="radio" value="4"/>
+                                <div class="size-10 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center">
+                                    <span class="material-symbols-outlined">directions_car</span>
+                                </div>
+                                <span class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm">Transport</span>
+                            </label>
+                            <!-- Option 3: Utilities -->
+                            <label class="relative flex flex-col items-center gap-3 p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:has-[:checked]:bg-primary/10">
+                                <input class="peer sr-only" name="category_id" type="radio" value="5"/>
+                                <div class="size-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                    <span class="material-symbols-outlined">bolt</span>
+                                </div>
+                                <span class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm">Utilities</span>
+                            </label>
+                            <!-- Option 4: Other -->
+                            <label class="relative flex flex-col items-center gap-3 p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:has-[:checked]:bg-primary/10">
+                                <input class="peer sr-only" name="category_id" type="radio" value="6"/>
+                                <div class="size-10 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 flex items-center justify-center">
+                                    <span class="material-symbols-outlined">more_horiz</span>
+                                </div>
+                                <span class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm">Other</span>
+                            </label>
+                        </div>
+                        @error('category_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        <!-- Amount Field -->
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-2">Total Amount (MYR)</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark font-bold text-lg">RM</span>
+                                <input name="amount" value="{{ old('amount') }}" class="w-full pl-12 pr-4 py-4 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl text-3xl font-bold text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-gray-700" placeholder="0.00" type="number" step="0.01" required/>
+                            </div>
+                            @error('amount') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                        </div>
+                        <!-- Date Field -->
+                        <div class="col-span-1">
+                            <label class="block text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-2">Date of Transaction</label>
+                            <div class="relative">
+                                <input name="date" value="{{ old('date', date('Y-m-d')) }}" class="w-full px-4 py-3 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" type="date" required/>
+                            </div>
+                            @error('date') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                        </div>
+                        <!-- Vendor Field -->
+                        <div class="col-span-1">
+                            <label class="block text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-2">Vendor / Payee</label>
+                            <input name="description" value="{{ old('description') }}" class="w-full px-4 py-3 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark" placeholder="e.g. TNB, Grab, Shopee" type="text" required/>
+                            @error('description') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                        </div>
+                        <!-- Description Field -->
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-2">Description / Notes</label>
+                            <textarea name="notes" class="w-full px-4 py-3 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark min-h-[100px] resize-none" placeholder="Enter additional details regarding this expense...">{{ old('notes') }}</textarea>
+                            @error('notes') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                        </div>
+                        
+                        <!-- Tax Deductible Checkbox -->
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="flex items-center gap-3 p-4 rounded-xl border border-border-light dark:border-border-dark bg-background-light/50 dark:bg-background-dark/50 cursor-pointer hover:bg-background-light dark:hover:bg-background-dark transition-colors">
+                                <input type="checkbox" name="is_deductible" value="1" class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary" {{ old('is_deductible') ? 'checked' : '' }}>
+                                <div>
+                                    <span class="block text-text-primary-light dark:text-text-primary-dark font-semibold text-sm">Tax Deductible Expense</span>
+                                    <span class="block text-text-secondary-light dark:text-text-secondary-dark text-xs mt-0.5">Check this if this expense qualifies for tax deduction.</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Attachment Upload -->
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="block text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-2">Receipt / Invoice</label>
+                            <label class="border-2 border-dashed border-border-light dark:border-border-dark hover:border-primary dark:hover:border-primary rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors bg-background-light/50 dark:bg-background-dark/50 group">
+                                <input type="file" name="attachment" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
+                                <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
+                                    <span class="material-symbols-outlined text-primary text-2xl">upload_file</span>
+                                </div>
+                                <p class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm">Click to upload or drag and drop</p>
+                                <p class="text-text-secondary-light dark:text-text-secondary-dark text-xs mt-1">PDF, JPG, PNG up to 2MB</p>
+                            </label>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </form>
         </main>
     </div>
 </div>
