@@ -74,15 +74,15 @@
                     <div class="mb-8 grid grid-cols-2 sm:grid-cols-3 gap-4">
                         <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
                             <p class="text-gray-600 dark:text-gray-400 text-xs font-medium mb-2">Total Income</p>
-                            <p class="text-xl font-bold text-gray-900 dark:text-white">RM 24,500</p>
+                            <p class="text-xl font-bold text-gray-900 dark:text-white">RM {{ number_format($totalIncome ?? 0, 2) }}</p>
                         </div>
                         <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 border border-red-200 dark:border-red-800">
                             <p class="text-gray-600 dark:text-gray-400 text-xs font-medium mb-2">Total Expenses</p>
-                            <p class="text-xl font-bold text-gray-900 dark:text-white">RM 8,200</p>
+                            <p class="text-xl font-bold text-gray-900 dark:text-white">RM {{ number_format($totalExpenses ?? 0, 2) }}</p>
                         </div>
                         <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
                             <p class="text-gray-600 dark:text-gray-400 text-xs font-medium mb-2">Net Balance</p>
-                            <p class="text-xl font-bold text-green-600 dark:text-green-400">RM 16,300</p>
+                            <p class="text-xl font-bold text-green-600 dark:text-green-400">RM {{ number_format($netBalance ?? 0, 2) }}</p>
                         </div>
                     </div>
 

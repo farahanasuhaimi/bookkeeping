@@ -71,17 +71,34 @@
                 </form>
             </nav>
         </div>
-        <div class="p-4 border-t border-border-light dark:border-border-dark">
-            <button class="flex w-full cursor-pointer items-center justify-center rounded-lg bg-primary py-2.5 text-[#111814] text-sm font-bold shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]">
-            <a href="{{ route('transactions.create') }}" class="flex w-full cursor-pointer items-center justify-center rounded-lg bg-primary py-2.5 text-[#111814] text-sm font-bold shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]">
+        <div class="p-4 border-t border-border-light dark:border-border-dark space-y-2">
+            <button onclick="openTransactionModal('income')" class="flex w-full cursor-pointer items-center justify-center rounded-lg bg-primary py-2.5 text-[#111814] text-sm font-bold shadow-sm transition-transform hover:scale-[1.02] active:scale-[0.98]">
                 <span class="material-symbols-outlined mr-2 text-[20px]">add_circle</span>
                 <span>Add Transaction</span>
             </button>
-            </a>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="openTransactionModal('income')" class="flex items-center justify-center gap-1 rounded-lg border border-primary/30 bg-primary/5 py-2 text-xs font-medium text-primary hover:bg-primary/10 transition-colors">
+                    <span class="material-symbols-outlined text-[16px]">trending_up</span>
+                    <span>Income</span>
+                </button>
+                <button onclick="openTransactionModal('expense')" class="flex items-center justify-center gap-1 rounded-lg border border-red-300 dark:border-red-900/50 bg-red-50 dark:bg-red-900/10 py-2 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors">
+                    <span class="material-symbols-outlined text-[16px]">trending_down</span>
+                    <span>Expense</span>
+                </button>
+            </div>
         </div>
     </aside>
     <!-- Main Content -->
     <main class="flex-1 overflow-y-auto">
+        <!-- Mobile Transaction Buttons (visible only on mobile) -->
+        <div class="fixed bottom-6 right-6 z-40 flex flex-col gap-3 lg:hidden">
+            <button onclick="openTransactionModal('expense')" class="flex items-center justify-center gap-2 rounded-full bg-red-500 dark:bg-red-600 p-4 text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all">
+                <span class="material-symbols-outlined">trending_down</span>
+            </button>
+            <button onclick="openTransactionModal('income')" class="flex items-center justify-center gap-2 rounded-full bg-primary p-4 text-[#111814] shadow-lg hover:shadow-xl hover:scale-110 transition-all">
+                <span class="material-symbols-outlined">trending_up</span>
+            </button>
+        </div>
         <div class="container mx-auto max-w-[1200px] px-4 py-8 md:px-8">
             <!-- Page Header -->
             <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -111,8 +128,7 @@
                         <p class="text-sm font-medium text-text-muted dark:text-gray-400">Total Income</p>
                         <span class="material-symbols-outlined text-primary bg-primary/10 rounded-full p-1 text-[20px]">trending_up</span>
                     </div>
-                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM 12,500.00</p>
-                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($totalIncome, 2) }}</p>
+                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($totalIncome ?? 0, 2) }}</p>
                     <div class="mt-2 flex items-center gap-2 text-xs">
                         <span class="font-medium text-green-600 dark:text-green-400">+12%</span>
                         <span class="font-medium text-green-600 dark:text-green-400">--</span>
@@ -125,8 +141,7 @@
                         <p class="text-sm font-medium text-text-muted dark:text-gray-400">Total Expenses</p>
                         <span class="material-symbols-outlined text-red-500 bg-red-500/10 rounded-full p-1 text-[20px]">trending_down</span>
                     </div>
-                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM 4,200.00</p>
-                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($totalExpenses, 2) }}</p>
+                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($totalExpenses ?? 0, 2) }}</p>
                     <div class="mt-2 flex items-center gap-2 text-xs">
                         <span class="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/30 px-2 py-0.5 font-medium text-green-700 dark:text-green-400">
                             <span class="material-symbols-outlined text-[14px]">verified</span>
@@ -141,8 +156,7 @@
                         <p class="text-sm font-medium text-text-muted dark:text-gray-400">Net Balance</p>
                         <span class="material-symbols-outlined text-text-main dark:text-white bg-gray-100 dark:bg-white/10 rounded-full p-1 text-[20px]">account_balance_wallet</span>
                     </div>
-                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM 8,300.00</p>
-                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($balance, 2) }}</p>
+                    <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($netBalance ?? 0, 2) }}</p>
                     <div class="mt-2 flex items-center gap-2 text-xs">
                         <span class="font-medium text-green-600 dark:text-green-400">+8%</span>
                         <span class="font-medium text-green-600 dark:text-green-400">--</span>
@@ -318,6 +332,7 @@
                                     <th class="px-6 py-3 font-semibold">Transaction</th>
                                     <th class="px-6 py-3 font-semibold text-center">Status</th>
                                     <th class="px-6 py-3 font-semibold text-right">Amount</th>
+                                    <th class="px-6 py-3 font-semibold text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-border-light dark:divide-border-dark">
@@ -332,6 +347,11 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-right font-bold text-green-600 dark:text-green-400">+ RM 3,500.00</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <button class="rounded p-1 text-text-muted hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors" title="Edit">
+                                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                                        </button>
+                                    </td>
                                 </tr>
                                 <tr class="group hover:bg-background-light dark:hover:bg-white/5">
                                     <td class="px-6 py-4">
@@ -347,6 +367,11 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-right font-bold text-text-main dark:text-white">- RM 150.00</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <button class="rounded p-1 text-text-muted hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors" title="Edit">
+                                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                                        </button>
+                                    </td>
                                 </tr>
                                 <tr class="group hover:bg-background-light dark:hover:bg-white/5">
                                     <td class="px-6 py-4">
@@ -362,6 +387,11 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-right font-bold text-text-main dark:text-white">- RM 4,299.00</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <button class="rounded p-1 text-text-muted hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors" title="Edit">
+                                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                                        </button>
+                                    </td>
                                 </tr>
                                 <tr class="group hover:bg-background-light dark:hover:bg-white/5">
                                     <td class="px-6 py-4">
@@ -374,6 +404,11 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-right font-bold text-text-main dark:text-white">- RM 180.00</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <button class="rounded p-1 text-text-muted hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors" title="Edit">
+                                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                                        </button>
+                                    </td>
                                 </tr>
                                 @forelse($transactions as $transaction)
                                     <tr class="group hover:bg-background-light dark:hover:bg-white/5">
@@ -394,10 +429,15 @@
                                         <td class="px-6 py-4 text-right font-bold {{ $transaction->type == 'income' ? 'text-green-600 dark:text-green-400' : 'text-text-main dark:text-white' }}">
                                             {{ $transaction->type == 'income' ? '+' : '-' }} RM {{ number_format($transaction->amount, 2) }}
                                         </td>
+                                        <td class="px-6 py-4 text-center">
+                                            <button class="rounded p-1 text-text-muted hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors" title="Edit">
+                                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                                            </button>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-6 py-4 text-center text-text-muted">No transactions found for this month.</td>
+                                        <td colspan="4" class="px-6 py-4 text-center text-text-muted">No transactions found for this month.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -405,7 +445,305 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Recent Transactions -->
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-text-main dark:text-white">Recent Transactions</h3>
+                <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach ($recentIncomes as $income)
+                        <div class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4 shadow-sm">
+                            <p class="text-sm font-medium text-text-muted dark:text-gray-400">Income: {{ $income->description }}</p>
+                            <p class="text-lg font-bold text-green-600 dark:text-green-400">+RM {{ number_format($income->amount, 2) }}</p>
+                            <p class="text-xs text-text-muted dark:text-gray-500">{{ $income->date }}</p>
+                        </div>
+                    @endforeach
+                    @foreach ($recentExpenses as $expense)
+                        <div class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4 shadow-sm">
+                            <p class="text-sm font-medium text-text-muted dark:text-gray-400">Expense: {{ $expense->description }}</p>
+                            <p class="text-lg font-bold text-red-500 dark:text-red-400">-RM {{ number_format($expense->amount, 2) }}</p>
+                            <p class="text-xs text-text-muted dark:text-gray-500">{{ $expense->date }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Tax Calculation Details -->
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-text-main dark:text-white">Tax Calculation</h3>
+                <div class="mt-4 rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-6 shadow-sm">
+                    <p class="text-sm font-medium text-text-muted dark:text-gray-400">Estimated Tax Savings</p>
+                    <p class="text-2xl font-bold text-primary">RM {{ number_format($estTaxSavings, 2) }}</p>
+                    <p class="mt-2 text-xs text-text-muted dark:text-gray-500">Based on 15% of total income.</p>
+                </div>
+            </div>
         </div>
     </main>
 </div>
-@endsection
+
+<!-- Add Transaction Modal -->
+<div id="transactionModal" class="fixed inset-0 z-50 hidden flex items-center justify-center overflow-y-auto bg-black/50 dark:bg-black/70 p-4">
+    <div class="w-full max-w-md rounded-2xl bg-surface-light dark:bg-surface-dark shadow-xl animation-fade-in">
+        <!-- Modal Header -->
+        <div class="border-b border-border-light dark:border-border-dark bg-background-light dark:bg-white/5 rounded-t-2xl px-6 py-4 flex items-center justify-between">
+            <h3 class="text-lg font-bold text-text-main dark:text-white" id="modalTitle">Add Income</h3>
+            <button onclick="closeTransactionModal()" class="rounded-lg p-1 text-text-muted hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+
+        <!-- Modal Content -->
+        <form id="transactionForm" class="space-y-4 p-6">
+            @csrf
+            <!-- Transaction Type (hidden field) -->
+            <input type="hidden" id="transactionType" name="type" value="income">
+
+            <!-- Description -->
+            <div>
+                <label for="description" class="block text-sm font-medium text-text-main dark:text-white mb-2">Description</label>
+                <input type="text" id="description" name="description" placeholder="e.g., Freelance Project" required class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-white/5 px-4 py-2.5 text-text-main dark:text-white placeholder-text-muted dark:placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50">
+            </div>
+
+            <!-- Amount -->
+            <div>
+                <label for="amount" class="block text-sm font-medium text-text-main dark:text-white mb-2">Amount (RM)</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-2.5 text-text-muted dark:text-gray-400">RM</span>
+                    <input type="number" id="amount" name="amount" placeholder="0.00" step="0.01" min="0" required class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-white/5 text-text-main dark:text-white placeholder-text-muted dark:placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50">
+                </div>
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label for="category" class="block text-sm font-medium text-text-main dark:text-white mb-2">Category</label>
+                <select id="category" name="category_id" required class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-white/5 px-4 py-2.5 text-text-main dark:text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50">
+                    <option value="">Select a category</option>
+                    <option value="1">Housing</option>
+                    <option value="2">Transport</option>
+                    <option value="3">Lifestyle</option>
+                    <option value="4">Food & Dining</option>
+                    <option value="5">Utilities</option>
+                    <option value="6">Equipment</option>
+                    <option value="7">Professional Services</option>
+                    <option value="8">Other</option>
+                </select>
+            </div>
+
+            <!-- Date -->
+            <div>
+                <label for="date" class="block text-sm font-medium text-text-main dark:text-white mb-2">Date</label>
+                <input type="date" id="date" name="date" required class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-white/5 px-4 py-2.5 text-text-main dark:text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50">
+            </div>
+
+            <!-- Tax Deductible (Expenses only) -->
+            <div id="deductibleSection" class="hidden space-y-2">
+                <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" id="isDeductible" name="is_deductible" class="w-4 h-4 rounded border-border-light dark:border-border-dark text-primary focus:ring-primary">
+                    <span class="text-sm font-medium text-text-main dark:text-white">Tax Deductible</span>
+                </label>
+                <p class="text-xs text-text-muted dark:text-gray-400 ml-7">Mark if this expense can be claimed as a tax deduction</p>
+            </div>
+
+            <!-- Notes -->
+            <div>
+                <label for="notes" class="block text-sm font-medium text-text-main dark:text-white mb-2">Notes (Optional)</label>
+                <textarea id="notes" name="notes" rows="2" placeholder="Add any additional details..." class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-white/5 px-4 py-2.5 text-text-main dark:text-white placeholder-text-muted dark:placeholder-gray-500 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none"></textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3 pt-4">
+                <button type="button" onclick="closeTransactionModal()" class="flex-1 rounded-lg border border-border-light dark:border-border-dark px-4 py-2.5 text-sm font-medium text-text-main dark:text-white hover:bg-background-light dark:hover:bg-white/5 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" class="flex-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-[#111814] hover:opacity-90 transition-opacity">
+                    Save Transaction
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Transaction Form Script -->
+<script>
+    const transactionModal = document.getElementById('transactionModal');
+    const transactionForm = document.getElementById('transactionForm');
+    const transactionTypeInput = document.getElementById('transactionType');
+    const modalTitle = document.getElementById('modalTitle');
+    const deductibleSection = document.getElementById('deductibleSection');
+    const dateInput = document.getElementById('date');
+    const categorySelect = document.getElementById('category');
+
+    // Set today's date as default
+    dateInput.valueAsDate = new Date();
+
+    function openTransactionModal(type) {
+        transactionTypeInput.value = type;
+        modalTitle.textContent = type === 'income' ? 'Add Income' : 'Add Expense';
+        deductibleSection.classList.toggle('hidden', type === 'income');
+        
+        // Update category options based on type
+        updateCategoryOptions(type);
+        
+        transactionModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeTransactionModal() {
+        transactionModal.classList.add('hidden');
+        transactionForm.reset();
+        dateInput.valueAsDate = new Date();
+        document.body.style.overflow = 'auto';
+    }
+
+    function updateCategoryOptions(type) {
+        const incomeOptions = [
+            { value: 'salary', text: 'Salary' },
+            { value: 'freelance', text: 'Freelance Work' },
+            { value: 'business', text: 'Business Income' },
+            { value: 'investment', text: 'Investment Returns' },
+            { value: 'other', text: 'Other Income' }
+        ];
+
+        const expenseOptions = [
+            { value: 'housing', text: 'Housing' },
+            { value: 'transport', text: 'Transport' },
+            { value: 'lifestyle', text: 'Lifestyle' },
+            { value: 'food', text: 'Food & Dining' },
+            { value: 'utilities', text: 'Utilities' },
+            { value: 'equipment', text: 'Equipment' },
+            { value: 'professional', text: 'Professional Services' },
+            { value: 'other', text: 'Other' }
+        ];
+
+        const options = type === 'income' ? incomeOptions : expenseOptions;
+        categorySelect.innerHTML = '<option value="">Select a category</option>' + 
+            options.map(opt => `<option value="${opt.value}">${opt.text}</option>`).join('');
+    }
+
+    // Form submission
+    transactionForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+
+        // Convert string to boolean for checkbox
+        data.is_deductible = formData.has('is_deductible') ? true : false;
+
+        try {
+            const response = await fetch('{{ route("transactions.store") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Show success message
+                showSuccessNotification(result.message);
+                
+                // Close modal
+                closeTransactionModal();
+                
+                // Refresh dashboard data after a short delay
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                showErrorNotification(result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showErrorNotification('Failed to save transaction. Please try again.');
+        }
+    });
+
+    // Helper function to show success notification
+    function showSuccessNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 z-50 bg-green-500 dark:bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg animate-slide-in';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.classList.add('animate-slide-out');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // Helper function to show error notification
+    function showErrorNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 z-50 bg-red-500 dark:bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg animate-slide-in';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.classList.add('animate-slide-out');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // Close modal when clicking outside
+    transactionModal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeTransactionModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !transactionModal.classList.contains('hidden')) {
+            closeTransactionModal();
+        }
+    });
+</script>
+
+<!-- Add CSS for modal animation -->
+<style>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+
+    .animation-fade-in {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .animate-slide-in {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    .animate-slide-out {
+        animation: slideOut 0.3s ease-in;
+    }
+</style>

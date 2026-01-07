@@ -16,6 +16,8 @@ class Expense extends Model
         'payment_method',
         'status',
         'receipt_url',
+        'is_deductible',
+        'notes',
     ];
 
     protected $casts = [
