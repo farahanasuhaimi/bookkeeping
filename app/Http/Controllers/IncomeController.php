@@ -19,6 +19,11 @@ class IncomeController extends Controller
         return view('income', compact('incomes'));
     }
 
+    public function create()
+    {
+        return view('income.create');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -28,15 +33,6 @@ class IncomeController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        Income::create([
-            'user_id' => Auth::id(),
-            'description' => $validated['description'],
-            'amount' => $validated['amount'],
-            'date' => $validated['date'],
-            'source' => $validated['description'],
-            'status' => 'confirmed',
-            'notes' => $validated['notes'] ?? null,
-        ]);
         try {
             Income::create([
                 'user_id' => Auth::id(),
@@ -48,8 +44,7 @@ class IncomeController extends Controller
                 'notes' => $validated['notes'] ?? null,
             ]);
 
-        return redirect()->back()->with('success', 'Income added successfully.');
-            return redirect()->back()->with('success', 'Income added successfully.');
+            return redirect()->route('income')->with('success', 'Income added successfully.');
         } catch (\Exception $e) {
             Log::error('Income save error: ' . $e->getMessage());
             return redirect()->back()->withErrors(['error' => 'Failed to save income.'])->withInput();
