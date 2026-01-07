@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\TaxSummaryController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -27,4 +30,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::get('/transactions/combined', [TransactionController::class, 'getCombined'])->name('transactions.combined');
     Route::get('/transactions/monthly', [TransactionController::class, 'getMonthly'])->name('transactions.monthly');
+
+    // New routes
+    Route::get('/income', [IncomeController::class, 'index'])->name('income');
+    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses');
+    Route::get('/tax-summary', [TaxSummaryController::class, 'index'])->name('tax-summary');
 });
