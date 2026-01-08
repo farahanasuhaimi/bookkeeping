@@ -22,6 +22,23 @@ class TaxSummaryController extends Controller
         $totalIncome = $incomeData->total_income ?? 0;
         $pcbPaid = $incomeData->total_pcb ?? 0;
 
+        // --- NEW: Income Projection Logic ---
+        $isHistorical = (int)$currentYear < (int)date('Y');
+        $monthsElapsed = 12;
+        
+        if (!$isHistorical) {
+            // Count months with confirmed income in the current year
+            $monthsWithIncome = \App\Models\Income::where('user_id', $user->id)
+                ->whereYear('date', $currentYear)
+                ->where('status', 'confirmed')
+                ->selectRaw('COUNT(DISTINCT MONTH(date)) as count')
+                ->value('count') ?: 1;
+            
+            $monthsElapsed = $monthsWithIncome;
+        }
+
+        $projectedIncome = $isHistorical ? $totalIncome : ($totalIncome / $monthsElapsed) * 12;
+
         // Breakdown income by category for Section A
         $incomeBreakdown = \App\Models\Income::where('user_id', $user->id)
             ->whereYear('date', $currentYear)
@@ -33,6 +50,11 @@ class TaxSummaryController extends Controller
         $employmentIncome = $incomeBreakdown[1] ?? 0;
         $rentalIncome = $incomeBreakdown[18] ?? 0;
         $otherIncome = ($incomeBreakdown[2] ?? 0) + ($incomeBreakdown[19] ?? 0); // Combined other sources
+
+        // Projected breakdown
+        $projEmployment = $isHistorical ? $employmentIncome : ($employmentIncome / $monthsElapsed) * 12;
+        $projRental = $isHistorical ? $rentalIncome : ($rentalIncome / $monthsElapsed) * 12;
+        $projOther = $isHistorical ? $otherIncome : ($otherIncome / $monthsElapsed) * 12;
 
         // 2. Calculate Total Deductions (Reliefs) - Based on YA 2026 LHDN Guidelines
         $standardRelief = 9000; // Individual and dependent relatives
@@ -77,11 +99,15 @@ class TaxSummaryController extends Controller
 
         return view('tax_summary', [
             'totalIncome' => $totalIncome,
+            'projectedIncome' => $projectedIncome,
             'currentYear' => $currentYear,
             'prevYear' => $prevYear,
             'employmentIncome' => $employmentIncome,
             'rentalIncome' => $rentalIncome,
             'otherIncome' => $otherIncome,
+            'projEmployment' => $projEmployment,
+            'projRental' => $projRental,
+            'projOther' => $projOther,
             'totalReliefs' => $totalReliefs,
             'chargeableIncome' => $chargeableIncome,
             'taxPayable' => $taxPayableBeforeRebate,
@@ -97,6 +123,7 @@ class TaxSummaryController extends Controller
             'epfReliefLimit' => 4000,
             'insuranceRelief' => $insuranceRelief,
             'insuranceReliefLimit' => 3000,
+            'isHistorical' => $isHistorical,
         ]);
     }
 

@@ -114,23 +114,46 @@
                             </div>
                         </summary>
                         <div class="border-t border-border-light dark:border-border-dark p-5 bg-gray-50/50 dark:bg-gray-900/20">
-                            <div class="flex flex-col gap-3">
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-text-muted dark:text-gray-400">Employment Income (EA Form)</span>
-                                    <span class="font-medium text-text-main dark:text-white">RM {{ number_format($employmentIncome, 2) }}</span>
+                            <div class="flex flex-col gap-4">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-bold text-text-muted dark:text-gray-400 uppercase tracking-wider px-2">
+                                    <span>Source</span>
+                                    <span class="text-right whitespace-nowrap">YTD (Actual)</span>
+                                    <span class="text-right whitespace-nowrap">Projected Annual</span>
                                 </div>
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-text-muted dark:text-gray-400">Rental Income (Net)</span>
-                                    <span class="font-medium text-text-main dark:text-white">RM {{ number_format($rentalIncome, 2) }}</span>
+                                
+                                <div class="flex flex-col gap-3">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center px-2 py-1 hover:bg-white dark:hover:bg-card-dark rounded-lg transition-colors">
+                                        <span class="text-sm text-text-muted dark:text-gray-400">Employment Income</span>
+                                        <span class="text-sm font-medium text-text-main dark:text-white md:text-right">RM {{ number_format($employmentIncome, 2) }}</span>
+                                        <span class="text-sm font-bold text-primary md:text-right">RM {{ number_format($projEmployment, 2) }}</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center px-2 py-1 hover:bg-white dark:hover:bg-card-dark rounded-lg transition-colors">
+                                        <span class="text-sm text-text-muted dark:text-gray-400">Rental Income (Net)</span>
+                                        <span class="text-sm font-medium text-text-main dark:text-white md:text-right">RM {{ number_format($rentalIncome, 2) }}</span>
+                                        <span class="text-sm font-bold text-primary md:text-right">RM {{ number_format($projRental, 2) }}</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center px-2 py-1 hover:bg-white dark:hover:bg-card-dark rounded-lg transition-colors">
+                                        <span class="text-sm text-text-muted dark:text-gray-400">Other (Freelance/Gig)</span>
+                                        <span class="text-sm font-medium text-text-main dark:text-white md:text-right">RM {{ number_format($otherIncome, 2) }}</span>
+                                        <span class="text-sm font-bold text-primary md:text-right">RM {{ number_format($projOther, 2) }}</span>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center pt-3 border-t border-dashed border-gray-200 dark:border-gray-700 px-2 mt-2">
+                                        <span class="text-sm text-text-main dark:text-white font-bold">Total Aggregated Income</span>
+                                        <span class="text-sm font-bold text-text-main dark:text-white md:text-right">RM {{ number_format($totalIncome, 2) }}</span>
+                                        <span class="text-lg font-black text-primary md:text-right">RM {{ number_format($projectedIncome, 2) }}</span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-text-muted dark:text-gray-400">Other (Part-time, Business, etc.)</span>
-                                    <span class="font-medium text-text-main dark:text-white">RM {{ number_format($otherIncome, 2) }}</span>
+
+                                @if(!$isHistorical)
+                                <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/50 rounded-xl flex gap-3 items-start">
+                                    <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">insights</span>
+                                    <p class="text-xs text-blue-800 dark:text-blue-300 leading-normal">
+                                        <strong>Forecast Note:</strong> We've extrapolated your Year-to-Date income (RM {{ number_format($totalIncome) }}) to estimate your full-year earnings. 
+                                        Based on this, you are projected to reach <strong>RM {{ number_format($projectedIncome) }}</strong> by December.
+                                    </p>
                                 </div>
-                                <div class="flex justify-between items-center text-sm pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
-                                    <span class="text-text-main dark:text-white font-semibold">Total Aggregated Income</span>
-                                    <span class="font-bold text-text-main dark:text-white">RM {{ number_format($totalIncome, 2) }}</span>
-                                </div>
+                                @endif
                             </div>
                         </div>
                     </details>
