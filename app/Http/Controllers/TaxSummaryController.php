@@ -6,12 +6,13 @@ use Illuminate\Http\Request;
 
 class TaxSummaryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
 
         // 1. Calculate Total Annual Income & PCB Paid
-        $currentYear = date('Y');
+        $currentYear = $request->input('year', date('Y'));
+        $prevYear = $currentYear - 1;
         $incomeData = \App\Models\Income::where('user_id', $user->id)
             ->whereYear('date', $currentYear)
             ->where('status', 'confirmed')
@@ -76,6 +77,8 @@ class TaxSummaryController extends Controller
 
         return view('tax_summary', [
             'totalIncome' => $totalIncome,
+            'currentYear' => $currentYear,
+            'prevYear' => $prevYear,
             'employmentIncome' => $employmentIncome,
             'rentalIncome' => $rentalIncome,
             'otherIncome' => $otherIncome,

@@ -54,6 +54,10 @@
                     <span class="material-symbols-outlined {{ request()->routeIs('tax-summary') ? 'text-primary' : '' }}">description</span>
                     <span class="text-sm font-medium">Tax Filing</span>
                 </a>
+                <a href="{{ route('saving-tracking') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg {{ request()->routeIs('saving-tracking') ? 'bg-primary/10 text-primary' : 'text-text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors">
+                    <span class="material-symbols-outlined text-[22px]">savings</span>
+                    <span class="text-sm font-semibold">Savings Tracker</span>
+                </a>
                 <a class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-muted hover:bg-background-light hover:text-text-main dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white transition-colors" href="#">
                     <span class="material-symbols-outlined">settings</span>
                     <span class="text-sm font-medium">Settings</span>

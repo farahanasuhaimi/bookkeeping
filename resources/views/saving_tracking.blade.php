@@ -85,9 +85,9 @@
                             <p class="text-[#618975] dark:text-gray-400 text-sm font-bold uppercase tracking-wider">Total Accumulated</p>
                         </div>
                         <div class="z-10">
-                            <p class="text-[#111814] dark:text-white text-3xl font-bold leading-tight">RM {{ number_format($totalSavings, 2) }}</p>
+                            <p class="text-[#111814] dark:text-white text-3xl font-bold leading-tight">RM {{ number_format($taxSavingsTotal + $totalGoalSavings, 2) }}</p>
                             <div class="flex items-center gap-1 mt-2">
-                                <span class="text-sm text-[#618975] dark:text-gray-500">Tracked Contributions</span>
+                                <span class="text-sm text-[#618975] dark:text-gray-500">Combined Financial Safety Net</span>
                             </div>
                         </div>
                     </div>
@@ -183,12 +183,65 @@
                             </div>
                         </div>
                         
+                        </div>
+                        
+                        <!-- Personal Goals (New) -->
+                        <div class="mt-8 flex flex-col gap-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-[#111814] dark:text-white text-lg font-bold">Personal Savings Goals</h3>
+                                <button onclick="document.getElementById('addGoalModal').classList.remove('hidden')" class="text-primary text-sm font-bold flex items-center gap-1 hover:bg-primary/10 px-2 py-1 rounded transition-colors">
+                                    <span class="material-symbols-outlined text-[18px]">add</span> New Goal
+                                </button>
+                            </div>
+
+                            <div class="flex flex-col gap-4">
+                                @forelse($goals as $goal)
+                                    @php
+                                        $widthGoal = min(($goal->current_amount / $goal->target_amount) * 100, 100);
+                                    @endphp
+                                    <div class="group relative rounded-xl border border-border-light dark:border-border-dark p-4 hover:border-primary/50 transition-all">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div>
+                                                <p class="text-sm font-bold text-text-main dark:text-white">{{ $goal->name }}</p>
+                                                <p class="text-[10px] text-text-muted mt-0.5">Target: RM {{ number_format($goal->target_amount) }} {{ $goal->due_date ? '• Due ' . $goal->due_date->format('M Y') : '' }}</p>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <form action="{{ route('savings-goals.update', $goal->id) }}" method="POST" class="flex items-center gap-2">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="number" name="current_amount" value="{{ (int)$goal->current_amount }}" step="0.01" class="w-20 text-xs px-2 py-1 rounded border border-border-light dark:bg-card-dark dark:border-border-dark text-text-main dark:text-white focus:ring-1 focus:ring-primary outline-none">
+                                                    <input type="hidden" name="status" value="{{ $goal->status }}">
+                                                    <button type="submit" class="text-primary opacity-0 group-hover:opacity-100 transition-opacity" title="Save Progress">
+                                                        <span class="material-symbols-outlined text-[18px]">save</span>
+                                                    </button>
+                                                </form>
+                                                <form action="{{ route('savings-goals.destroy', $goal->id) }}" method="POST" onsubmit="return confirm('Delete this goal?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-400 opacity-0 group-hover:opacity-100 transition-opacity" title="Delete">
+                                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="h-2 w-full bg-[#f0f4f2] dark:bg-[#333] rounded-full overflow-hidden">
+                                            <div class="h-full {{ $goal->status == 'completed' ? 'bg-green-500' : 'bg-primary' }} rounded-full" style="width: {{ $widthGoal }}%"></div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="text-center py-6 border-2 border-dashed border-border-light dark:border-border-dark rounded-xl">
+                                        <p class="text-xs text-text-muted">No specific goals set yet.</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+
                         <!-- Promo/Alert -->
-                        <div class="mt-6 p-3 bg-background-light dark:bg-[#15221d] rounded-lg border border-dashed border-primary/30 flex items-start gap-3">
-                            <span class="material-symbols-outlined text-primary mt-0.5">info</span>
+                        <div class="mt-6 p-4 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary mt-0.5">tips_and_updates</span>
                             <div>
-                                <p class="text-sm font-semibold text-text-main dark:text-white">Maximize your relief!</p>
-                                <p class="text-xs text-text-muted">Don't forget to top up your SSPN or PRS before year-end.</p>
+                                <p class="text-sm font-bold text-text-main dark:text-white">Tax Optimization Tip</p>
+                                <p class="text-xs text-text-muted leading-relaxed">Consider shifting RM 250/month to your SSPN goal to max out the RM 8,000 annual relief.</p>
                             </div>
                         </div>
                     </div>
@@ -229,6 +282,47 @@
                         </div>
                     </div>
                 </div>
+            </div>
+    <!-- Add Goal Modal -->
+    <div id="addGoalModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
+            <div class="fixed inset-0 bg-black/50 transition-opacity" aria-hidden="true" onclick="document.getElementById('addGoalModal').classList.add('hidden')"></div>
+            <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-card-dark text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+                <form action="{{ route('savings-goals.store') }}" method="POST" class="p-6">
+                    @csrf
+                    <div class="mb-4 flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-text-main dark:text-white">New Savings Goal</h3>
+                        <button type="button" onclick="document.getElementById('addGoalModal').classList.add('hidden')" class="text-text-muted hover:text-text-main dark:text-gray-400 dark:hover:text-white">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    
+                    <div class="flex flex-col gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-text-muted dark:text-gray-400 uppercase tracking-wider mb-1">Goal Name</label>
+                            <input type="text" name="name" placeholder="e.g. Emergency Fund" required class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-4 py-2 text-sm text-text-main dark:text-white focus:ring-2 focus:ring-primary outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-text-muted dark:text-gray-400 uppercase tracking-wider mb-1">Target (RM)</label>
+                                <input type="number" name="target_amount" placeholder="5000" required step="0.01" class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-4 py-2 text-sm text-text-main dark:text-white focus:ring-2 focus:ring-primary outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-text-muted dark:text-gray-400 uppercase tracking-wider mb-1">Current (RM)</label>
+                                <input type="number" name="current_amount" value="0" step="0.01" class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-4 py-2 text-sm text-text-main dark:text-white focus:ring-2 focus:ring-primary outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-text-muted dark:text-gray-400 uppercase tracking-wider mb-1">Target Date (Optional)</label>
+                            <input type="date" name="due_date" class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-4 py-2 text-sm text-text-main dark:text-white focus:ring-2 focus:ring-primary outline-none">
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end gap-3">
+                        <button type="button" onclick="document.getElementById('addGoalModal').classList.add('hidden')" class="rounded-lg px-4 py-2 text-sm font-bold text-text-muted hover:bg-gray-100 dark:hover:bg-white/5">Cancel</button>
+                        <button type="submit" class="rounded-lg bg-primary px-6 py-2 text-sm font-black text-white shadow-lg shadow-primary/20 hover:opacity-90 transition-opacity">Create Goal</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

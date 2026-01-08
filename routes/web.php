@@ -36,5 +36,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/tax-summary', [TaxSummaryController::class, 'index'])->name('tax-summary');
 
     // Savings Route
-    Route::get('/savings', [SavingsController::class, 'index'])->name('savings');
+    Route::get('/saving-tracking', [SavingsController::class, 'index'])->name('saving-tracking');
+    Route::resource('savings-goals', SavingsController::class)->except(['index', 'show', 'create', 'edit']);
 });

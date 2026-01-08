@@ -8,15 +8,17 @@
             <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-2">
                     <h1 class="text-text-main dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Tax Summary</h1>
-                    <span class="inline-flex items-center rounded-md bg-green-50 dark:bg-green-900/30 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-400 ring-1 ring-inset ring-green-600/20">YA 2026</span>
+                    <span class="inline-flex items-center rounded-md bg-green-50 dark:bg-green-900/30 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-400 ring-1 ring-inset ring-green-600/20">YA {{ $currentYear }}</span>
                 </div>
                 <div class="flex items-center gap-2 text-text-muted dark:text-gray-400">
                     <span>Year of Assessment: </span>
-                    <select class="bg-transparent border-none py-0 pl-0 pr-8 text-base font-semibold text-primary focus:ring-0 cursor-pointer">
-                        <option>2026</option>
-                        <option>2025</option>
-                        <option>2024</option>
-                    </select>
+                    <form action="{{ route('tax-summary') }}" method="GET" id="yearForm">
+                        <select name="year" onchange="this.form.submit()" class="bg-transparent border-none py-0 pl-0 pr-8 text-base font-semibold text-primary focus:ring-0 cursor-pointer">
+                            <option value="2026" {{ $currentYear == '2026' ? 'selected' : '' }}>2026</option>
+                            <option value="2025" {{ $currentYear == '2025' ? 'selected' : '' }}>2025</option>
+                            <option value="2024" {{ $currentYear == '2024' ? 'selected' : '' }}>2024</option>
+                        </select>
+                    </form>
                 </div>
             </div>
             <div class="flex gap-3">
@@ -43,7 +45,7 @@
                 <p class="text-text-main dark:text-white text-2xl font-bold tracking-tight">RM {{ number_format($totalIncome, 2) }}</p>
                 <div class="flex items-center text-xs text-green-600 dark:text-green-400 mt-1">
                     <span class="material-symbols-outlined text-sm mr-0.5">trending_up</span>
-                    <span>+12% from 2025</span>
+                    <span>vs {{ $prevYear }}</span>
                 </div>
             </div>
             <!-- Card 2 -->

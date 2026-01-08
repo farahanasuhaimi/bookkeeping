@@ -29,32 +29,35 @@ class DashboardController extends Controller
 
         // 2. High Level Stats
         $totalIncome = Income::where('user_id', $user->id)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->whereYear('date', $startOfMonth->year)
+            ->whereMonth('date', $startOfMonth->month)
+            ->where('status', 'confirmed')
             ->sum('amount');
 
         $totalExpenses = Expense::where('user_id', $user->id)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
-            // Do we exclude Savings/Tax Relief from "Total Expenses"?
-            // Usually yes if we want "Burn Rate", but for simplicity let's keep all.
-            // Or better: Exclude "Savings/Investments" category types if they exist?
-            // For now, simple sum.
+            ->whereYear('date', $startOfMonth->year)
+            ->whereMonth('date', $startOfMonth->month)
+            ->where('status', 'completed')
             ->sum('amount');
 
         $netBalance = $totalIncome - $totalExpenses;
 
         // 3. Chart Data (Daily for the selected month)
-        // We need an array of [Day => [Income, Expense]]
         $chartData = [];
         $daysInMonth = $startOfMonth->daysInMonth;
         
         $dailyIncomes = Income::where('user_id', $user->id)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->whereYear('date', $startOfMonth->year)
+            ->whereMonth('date', $startOfMonth->month)
+            ->where('status', 'confirmed')
             ->selectRaw('DATE(date) as day, SUM(amount) as total')
             ->groupBy('day')
             ->pluck('total', 'day');
 
         $dailyExpenses = Expense::where('user_id', $user->id)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->whereYear('date', $startOfMonth->year)
+            ->whereMonth('date', $startOfMonth->month)
+            ->where('status', 'completed')
             ->selectRaw('DATE(date) as day, SUM(amount) as total')
             ->groupBy('day')
             ->pluck('total', 'day');
@@ -70,7 +73,9 @@ class DashboardController extends Controller
 
         // 4. Expense Categories Breakdown
         $expensesByCategory = Expense::where('user_id', $user->id)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->whereYear('date', $startOfMonth->year)
+            ->whereMonth('date', $startOfMonth->month)
+            ->where('status', 'completed')
             ->with('category')
             ->get()
             ->groupBy('category.name')
@@ -81,11 +86,12 @@ class DashboardController extends Controller
                     'percentage' => $totalExpenses > 0 ? round(($sum / $totalExpenses) * 100) : 0,
                     'count' => $group->count()
                 ];
-            })->sortByDesc('amount')->take(4); // Top 4 categories
+            })->sortByDesc('amount')->take(4);
 
-        // 5. Recent/All Transactions for the list
+        // 5. Recent/All Transactions
         $incomes = Income::where('user_id', $user->id)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->whereYear('date', $startOfMonth->year)
+            ->whereMonth('date', $startOfMonth->month)
             ->with(['category', 'paymentMethod'])
             ->orderBy('date', 'desc')
             ->get()
@@ -95,7 +101,8 @@ class DashboardController extends Controller
             });
 
         $expenses = Expense::where('user_id', $user->id)
-            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->whereYear('date', $startOfMonth->year)
+            ->whereMonth('date', $startOfMonth->month)
             ->with(['category', 'paymentMethod'])
             ->orderBy('date', 'desc')
             ->get()
@@ -106,9 +113,22 @@ class DashboardController extends Controller
 
         $transactions = $incomes->concat($expenses)->sortByDesc('date');
 
-        // 6. Tax Savings (Dummy calculation or based on dedicated view)
-        // Let's just pass a rough estimate
-        $estTaxSavings = $totalExpenses * 0.24; // Avg tax rate assumption
+        // 6. Refined Tax Savings Estimate (Monthly)
+        // Calculate tax savings based on deductible expenses in this month
+        $deductibleTotal = Expense::where('user_id', $user->id)
+            ->whereYear('date', $startOfMonth->year)
+            ->whereMonth('date', $startOfMonth->month)
+            ->where('status', 'completed')
+            ->where('is_deductible', true)
+            ->sum('amount');
+
+        $estTaxSavings = $deductibleTotal * 0.15; // Conservative average relief impact estimate
+
+        // 7. Active Savings Goals
+        $activeGoals = \App\Models\SavingsGoal::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->orderBy('due_date', 'asc')
+            ->get();
 
         return view('dashboard', compact(
             'selectedMonth',
@@ -120,7 +140,8 @@ class DashboardController extends Controller
             'expensesByCategory', 
             'transactions',
             'estTaxSavings',
-            'paymentMethods'
+            'paymentMethods',
+            'activeGoals'
         ));
     }
 }

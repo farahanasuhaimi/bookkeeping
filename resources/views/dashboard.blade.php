@@ -155,6 +155,34 @@
                 @endforelse
             </div>
         </div>
+        <!-- Savings Goals -->
+        <div class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-6 shadow-sm flex flex-col">
+            <div class="mb-4 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-text-main dark:text-white">Savings Goals</h3>
+                <a href="{{ route('saving-tracking') }}" class="text-xs font-bold text-primary hover:underline">View All</a>
+            </div>
+            <div class="flex flex-col gap-4 flex-1">
+                @forelse($activeGoals as $goal)
+                    @php
+                        $perc = $goal->target_amount > 0 ? min(($goal->current_amount / $goal->target_amount) * 100, 100) : 0;
+                    @endphp
+                    <div class="flex flex-col gap-2">
+                        <div class="flex justify-between items-end">
+                            <span class="text-sm font-bold text-text-main dark:text-white">{{ $goal->name }}</span>
+                            <span class="text-[10px] text-text-muted dark:text-gray-400">RM {{ number_format($goal->current_amount) }} / {{ number_format($goal->target_amount) }}</span>
+                        </div>
+                        <div class="h-1.5 w-full bg-background-light dark:bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-primary rounded-full transition-all duration-500" style="width: {{ $perc }}%"></div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="flex-1 flex flex-col items-center justify-center text-text-muted py-8">
+                        <span class="material-symbols-outlined text-4xl mb-2 opacity-50">savings</span>
+                        <p class="text-xs">No active goals</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
     </div>
 
     <!-- Bottom Section: Recent Transactions -->
