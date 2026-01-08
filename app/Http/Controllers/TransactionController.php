@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Income;
 use App\Models\Expense;
+use App\Models\PaymentMethod;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,15 +23,21 @@ class TransactionController extends Controller
             'type' => 'required|in:income,expense',
             'description' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0.01',
-            'category_id' => 'nullable|sometimes',
+            'category_id' => 'nullable|exists:categories,id',
+            'payment_method_id' => 'required|exists:payment_methods,id',
             'date' => 'required|date',
             'is_deductible' => 'boolean',
             'notes' => 'nullable|string',
             'pcb_amount' => 'nullable|numeric|min:0',
-            'attachment' => 'nullable|file|max:10240', // Max 10MB
+            'attachment' => 'nullable|file|max:10240|mimes:jpeg,png,pdf,jpg', // Max 10MB
         ]);
 
         try {
+            $attachmentPath = null;
+            if ($request->hasFile('attachment')) {
+                $attachmentPath = $request->file('attachment')->store('attachments', 'public');
+            }
+
             if ($validated['type'] === 'income') {
                 $transaction = Income::create([
                     'user_id' => $user->id,
@@ -41,13 +48,10 @@ class TransactionController extends Controller
                     'status' => 'confirmed',
                     'notes' => $validated['notes'] ?? null,
                     'category_id' => $validated['category_id'] ?? null,
+                    'payment_method_id' => $validated['payment_method_id'],
                     'pcb_amount' => $validated['pcb_amount'] ?? null,
+                    'attachment_path' => $attachmentPath,
                 ]);
-
-                if ($request->hasFile('attachment')) {
-                    $path = $request->file('attachment')->store('attachments', 'public');
-                    $transaction->update(['attachment' => $path]);
-                }
             } else {
                 $transaction = Expense::create([
                     'user_id' => $user->id,
@@ -56,15 +60,11 @@ class TransactionController extends Controller
                     'category_id' => $validated['category_id'] ?? null,
                     'date' => $validated['date'],
                     'status' => 'completed',
-                    'payment_method' => 'other', // Default payment method
+                    'payment_method_id' => $validated['payment_method_id'],
                     'is_deductible' => $validated['is_deductible'] ?? false,
                     'notes' => $validated['notes'] ?? null,
+                    'attachment_path' => $attachmentPath,
                 ]);
-
-                if ($request->hasFile('attachment')) {
-                    $path = $request->file('attachment')->store('attachments', 'public');
-                    $transaction->update(['receipt_url' => $path]);
-                }
             }
 
             if ($request->wantsJson()) {

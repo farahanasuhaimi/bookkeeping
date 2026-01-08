@@ -1,118 +1,133 @@
 @extends('layouts.dashboard')
 
+@extends('layouts.dashboard')
+
 @section('dashboard-content')
 <div class="flex h-screen w-full overflow-hidden">
     <!-- Main Content -->
     <div class="flex flex-col flex-1 h-full overflow-hidden bg-background-light dark:bg-background-dark relative">
         <!-- Main Scrollable Area -->
         <main class="flex-1 overflow-y-auto no-scrollbar p-4 md:p-8 lg:px-12 xl:px-24">
-            <form action="{{ route('transactions.store') }}" method="POST" enctype="multipart/form-data" class="max-w-4xl mx-auto flex flex-col gap-6">
-                @csrf
-                <input type="hidden" name="type" value="expense">
-                <!-- PageHeading -->
+            <div class="max-w-6xl mx-auto flex flex-col gap-6">
+                <!-- Header -->
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div class="flex flex-col gap-2">
-                        <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-text-secondary-light dark:text-text-secondary-dark text-sm hover:text-primary transition-colors">
-                            <span class="material-symbols-outlined text-sm">arrow_back</span>
-                            <span>Back to Dashboard</span>
-                        </a>
-                        <h1 class="text-text-primary-light dark:text-text-primary-dark text-3xl md:text-4xl font-black tracking-tight">Add New Expense</h1>
-                        <p class="text-text-secondary-light dark:text-text-secondary-dark text-base">Record your business expenses for tax deductions.</p>
+                        <h1 class="text-text-primary-light dark:text-text-primary-dark text-3xl md:text-4xl font-black tracking-tight">Expenses</h1>
+                        <p class="text-text-secondary-light dark:text-text-secondary-dark text-base">Manage your spending and tax deductions.</p>
                     </div>
-                    <div class="flex gap-3">
-                        <a href="{{ route('dashboard') }}" class="px-4 py-2 rounded-lg border border-border-light dark:border-border-dark text-text-primary-light dark:text-text-primary-dark font-medium hover:bg-background-light dark:hover:bg-background-dark transition-colors text-center">Cancel</a>
-                        <button type="submit" class="px-6 py-2 rounded-lg bg-primary text-[#064e2a] font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark hover:text-white transition-all transform hover:-translate-y-0.5">Save Expense</button>
+                    <button onclick="openTransactionModal('expense')" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-[#064e2a] font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark hover:text-white transition-all transform hover:-translate-y-0.5">
+                        <span class="material-symbols-outlined text-[20px]">add_circle</span>
+                        <span>Add New Expense</span>
+                    </button>
+                </div>
+
+                <!-- Data Table -->
+                <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-border-light dark:border-border-dark overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="bg-background-light dark:bg-white/5 border-b border-border-light dark:border-border-dark text-text-muted dark:text-gray-400 uppercase text-xs font-semibold">
+                                <tr>
+                                    <th class="px-6 py-4">Date</th>
+                                    <th class="px-6 py-4">Vendor / Description</th>
+                                    <th class="px-6 py-4">Category</th>
+                                    <th class="px-6 py-4">Method</th>
+                                    <th class="px-6 py-4 text-center">Receipt</th>
+                                    <th class="px-6 py-4 text-right">Amount (RM)</th>
+                                    <th class="px-6 py-4 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-border-light dark:divide-border-dark text-text-primary-light dark:text-text-primary-dark">
+                                @forelse($expenses as $expense)
+                                <tr class="hover:bg-background-light dark:hover:bg-white/5 transition-colors">
+                                    <td class="px-6 py-4">{{ $expense->date->format('d M Y') }}</td>
+                                    <td class="px-6 py-4">
+                                        <p class="font-bold truncate max-w-[200px]">{{ $expense->description }}</p>
+                                        <p class="text-xs text-text-secondary-light dark:text-text-secondary-dark truncate max-w-[200px]">{{ $expense->notes ?? 'No notes' }}</p>
+                                        @if($expense->is_deductible)
+                                        <span class="inline-flex items-center gap-1 mt-1 text-[10px] bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded">
+                                            <span class="material-symbols-outlined text-[10px]">verified</span> Tax Deductible
+                                        </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <div class="size-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs">
+                                                <span class="material-symbols-outlined text-[14px]">
+                                                    {{ match(strtolower($expense->category->name ?? 'other')) {
+                                                        'housing' => 'home',
+                                                        'transport' => 'directions_car',
+                                                        'utilities' => 'bolt',
+                                                        'food & dining' => 'restaurant',
+                                                        'entertainment' => 'confirmation_number',
+                                                        'lifestyle' => 'fitness_center',
+                                                        'equipment' => 'computer',
+                                                        'professional services' => 'work',
+                                                        default => 'category'
+                                                    } }}
+                                                </span>
+                                            </div>
+                                            <span>{{ $expense->category->name ?? 'Uncategorized' }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="text-sm border border-border-light dark:border-border-dark px-2 py-1 rounded text-text-muted">
+                                            {{ $expense->paymentMethod->name ?? 'Other' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        @if($expense->attachment_path)
+                                        <a href="{{ Storage::url($expense->attachment_path) }}" target="_blank" class="text-primary hover:underline text-xs flex items-center justify-center gap-1">
+                                            <span class="material-symbols-outlined text-[16px]">visibility</span> View
+                                        </a>
+                                        @elseif($expense->receipt_url)
+                                         <a href="{{ Storage::url($expense->receipt_url) }}" target="_blank" class="text-primary hover:underline text-xs flex items-center justify-center gap-1">
+                                            <span class="material-symbols-outlined text-[16px]">visibility</span> View
+                                        </a>
+                                        @else
+                                        <span class="text-text-muted dark:text-gray-600 text-xs">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 text-right font-bold font-mono text-text-main dark:text-white">
+                                        {{ number_format($expense->amount, 2) }}
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button class="p-1 rounded text-text-muted hover:bg-gray-100 dark:hover:bg-white/10 transition-colors" title="Edit (Coming Soon)">
+                                                <span class="material-symbols-outlined text-[18px]">edit</span>
+                                            </button>
+                                            <form action="{{ route('expenses.destroy', $expense->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this expense?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="p-1 rounded text-text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete">
+                                                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-12 text-center text-text-secondary-light dark:text-text-secondary-dark">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <div class="size-16 rounded-full bg-background-light dark:bg-white/5 flex items-center justify-center">
+                                                <span class="material-symbols-outlined text-3xl text-text-muted">receipt_long</span>
+                                            </div>
+                                            <p class="text-base font-medium">No expenses found</p>
+                                            <p class="text-sm max-w-md mx-auto">Start tracking your tax-deductible expenses by adding a new record.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <!-- Form Container -->
-                <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-border-light dark:border-border-dark p-6 md:p-8">
-                    <!-- Category Section -->
-                    <div class="mb-8">
-                        <label class="text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-3 block">Expense Category</label>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            @foreach($categories as $category)
-                            <label class="relative flex flex-col items-center gap-3 p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:has-[:checked]:bg-primary/10">
-                                <input class="peer sr-only" name="category_id" type="radio" value="{{ $category->id }}" required/>
-                                <div class="size-10 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                                    <span class="material-symbols-outlined">
-                                        {{ match(strtolower($category->name)) {
-                                            'housing' => 'home',
-                                            'transport' => 'directions_car',
-                                            'utilities' => 'bolt',
-                                            'food & dining' => 'restaurant',
-                                            'entertainment' => 'confirmation_number', // ticket icon
-                                            'lifestyle' => 'fitness_center',
-                                            'equipment' => 'computer',
-                                            'professional services' => 'work',
-                                            'other' => 'more_horiz',
-                                            default => 'category'
-                                        } }}
-                                    </span>
-                                </div>
-                                <span class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm text-center">{{ $category->name }}</span>
-                            </label>
-                            @endforeach
-                        </div>
-                        @error('category_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                        <!-- Amount Field -->
-                        <div class="col-span-1 md:col-span-2">
-                            <label class="block text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-2">Total Amount (MYR)</label>
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark font-bold text-lg">RM</span>
-                                <input name="amount" value="{{ old('amount') }}" class="w-full pl-12 pr-4 py-4 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl text-3xl font-bold text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-gray-700" placeholder="0.00" type="number" step="0.01" required/>
-                            </div>
-                            @error('amount') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                        </div>
-                        <!-- Date Field -->
-                        <div class="col-span-1">
-                            <label class="block text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-2">Date of Transaction</label>
-                            <div class="relative">
-                                <input name="date" value="{{ old('date', date('Y-m-d')) }}" class="w-full px-4 py-3 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" type="date" required/>
-                            </div>
-                            @error('date') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                        </div>
-                        <!-- Vendor Field -->
-                        <div class="col-span-1">
-                            <label class="block text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-2">Vendor / Payee</label>
-                            <input name="description" value="{{ old('description') }}" class="w-full px-4 py-3 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark" placeholder="e.g. TNB, Grab, Shopee" type="text" required/>
-                            @error('description') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                        </div>
-                        <!-- Description Field -->
-                        <div class="col-span-1 md:col-span-2">
-                            <label class="block text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-2">Description / Notes</label>
-                            <textarea name="notes" class="w-full px-4 py-3 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl text-text-primary-light dark:text-text-primary-dark focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark min-h-[100px] resize-none" placeholder="Enter additional details regarding this expense...">{{ old('notes') }}</textarea>
-                            @error('notes') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-                        </div>
-                        
-                        <!-- Tax Deductible Checkbox -->
-                        <div class="col-span-1 md:col-span-2">
-                            <label class="flex items-center gap-3 p-4 rounded-xl border border-border-light dark:border-border-dark bg-background-light/50 dark:bg-background-dark/50 cursor-pointer hover:bg-background-light dark:hover:bg-background-dark transition-colors">
-                                <input type="checkbox" name="is_deductible" value="1" class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary" {{ old('is_deductible') ? 'checked' : '' }}>
-                                <div>
-                                    <span class="block text-text-primary-light dark:text-text-primary-dark font-semibold text-sm">Tax Deductible Expense</span>
-                                    <span class="block text-text-secondary-light dark:text-text-secondary-dark text-xs mt-0.5">Check this if this expense qualifies for tax deduction.</span>
-                                </div>
-                            </label>
-                        </div>
-
-                        <!-- Attachment Upload -->
-                        <div class="col-span-1 md:col-span-2">
-                            <label class="block text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-2">Receipt / Invoice</label>
-                            <label class="border-2 border-dashed border-border-light dark:border-border-dark hover:border-primary dark:hover:border-primary rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-colors bg-background-light/50 dark:bg-background-dark/50 group">
-                                <input type="file" name="attachment" class="hidden" accept=".pdf,.jpg,.jpeg,.png">
-                                <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
-                                    <span class="material-symbols-outlined text-primary text-2xl">upload_file</span>
-                                </div>
-                                <p class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm">Click to upload or drag and drop</p>
-                                <p class="text-text-secondary-light dark:text-text-secondary-dark text-xs mt-1">PDF, JPG, PNG up to 2MB</p>
-                            </label>
-                        </div>
-                    </div>
+                
+                <!-- Pagination -->
+                <div class="mt-4">
+                    {{ $expenses->links() }}
                 </div>
-            </form>
+            </div>
         </main>
     </div>
 </div>

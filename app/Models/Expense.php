@@ -16,7 +16,8 @@ class Expense extends Model
         'status',
         'notes',
         'is_deductible',
-        'receipt_url',
+        'payment_method_id',
+        'attachment_path',
     ];
 
     protected $casts = [
@@ -33,5 +34,10 @@ class Expense extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function paymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class);
     }
 }

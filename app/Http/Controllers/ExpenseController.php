@@ -8,19 +8,22 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
+use App\Models\PaymentMethod;
+
 class ExpenseController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
         $expenses = Expense::where('user_id', $user->id)
-            ->with('category')
+            ->with(['category', 'paymentMethod'])
             ->orderBy('date', 'desc')
             ->paginate(10);
             
         $categories = Category::where('type', 'expense')->get();
+        $paymentMethods = PaymentMethod::where('user_id', $user->id)->get();
 
-        return view('expense', compact('expenses', 'categories'));
+        return view('expense', compact('expenses', 'categories', 'paymentMethods'));
     }
 
     public function store(Request $request)

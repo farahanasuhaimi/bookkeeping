@@ -4,105 +4,123 @@ namespace App\Http\Controllers;
 
 use App\Models\Income;
 use App\Models\Expense;
-use App\Models\Savings;
+use App\Models\PaymentMethod;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
         if (!$user) {
-            // Return home page for non-authenticated users
-            return view('welcome', [
-                'totalIncome' => 0,
-                'totalExpenses' => 0,
-                'netBalance' => 0,
-                'recentIncomes' => [],
-                'recentExpenses' => [],
-                'activeSavings' => [],
-                'expensesByCategory' => [],
-            ]);
+            return redirect()->route('login');
         }
 
-        // Get current user's financial data
+        $paymentMethods = PaymentMethod::where('user_id', $user->id)->get();
+
+        // 1. Determine Month to View
+        $selectedMonth = $request->input('month', date('Y-m'));
+        $startOfMonth = Carbon::createFromFormat('Y-m', $selectedMonth)->startOfMonth();
+        $endOfMonth = Carbon::createFromFormat('Y-m', $selectedMonth)->endOfMonth();
+
+        // 2. High Level Stats
         $totalIncome = Income::where('user_id', $user->id)
-            ->where('status', 'confirmed')
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->sum('amount');
 
         $totalExpenses = Expense::where('user_id', $user->id)
-            ->where('status', 'completed')
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            // Do we exclude Savings/Tax Relief from "Total Expenses"?
+            // Usually yes if we want "Burn Rate", but for simplicity let's keep all.
+            // Or better: Exclude "Savings/Investments" category types if they exist?
+            // For now, simple sum.
             ->sum('amount');
 
         $netBalance = $totalIncome - $totalExpenses;
 
-        // Get recent transactions
-        $recentIncomes = Income::where('user_id', $user->id)
-            ->orderBy('date', 'desc')
-            ->limit(5)
-            ->get();
+        // 3. Chart Data (Daily for the selected month)
+        // We need an array of [Day => [Income, Expense]]
+        $chartData = [];
+        $daysInMonth = $startOfMonth->daysInMonth;
+        
+        $dailyIncomes = Income::where('user_id', $user->id)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->selectRaw('DATE(date) as day, SUM(amount) as total')
+            ->groupBy('day')
+            ->pluck('total', 'day');
 
-        $recentExpenses = Expense::where('user_id', $user->id)
-            ->with('category')
-            ->orderBy('date', 'desc')
-            ->limit(5)
-            ->get();
+        $dailyExpenses = Expense::where('user_id', $user->id)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->selectRaw('DATE(date) as day, SUM(amount) as total')
+            ->groupBy('day')
+            ->pluck('total', 'day');
 
-        // Get savings data
-        $activeSavings = Savings::where('user_id', $user->id)
-            ->where('status', 'active')
-            ->get();
+        for ($i = 1; $i <= $daysInMonth; $i++) {
+            $date = $startOfMonth->copy()->day($i)->format('Y-m-d');
+            $chartData[] = [
+                'date' => $startOfMonth->copy()->day($i)->format('d M'),
+                'income' => $dailyIncomes[$date] ?? 0,
+                'expense' => $dailyExpenses[$date] ?? 0
+            ];
+        }
 
-        // Get expense breakdown by category
+        // 4. Expense Categories Breakdown
         $expensesByCategory = Expense::where('user_id', $user->id)
-            ->where('status', 'completed')
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->with('category')
             ->get()
             ->groupBy('category.name')
-            ->map(function ($group) {
-                return $group->sum('amount');
-            });
+            ->map(function ($group) use ($totalExpenses) {
+                $sum = $group->sum('amount');
+                return [
+                    'amount' => $sum,
+                    'percentage' => $totalExpenses > 0 ? round(($sum / $totalExpenses) * 100) : 0,
+                    'count' => $group->count()
+                ];
+            })->sortByDesc('amount')->take(4); // Top 4 categories
 
-        // Calculate estimated tax savings
-        $estTaxSavings = $totalIncome * 0.15; // Assuming 15% of total income as tax savings
-
-        // Get combined transactions for the table
+        // 5. Recent/All Transactions for the list
         $incomes = Income::where('user_id', $user->id)
-            ->select('id', 'description', 'amount', 'date', 'status')
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->with(['category', 'paymentMethod'])
+            ->orderBy('date', 'desc')
             ->get()
-            ->map(function ($income) {
-                $income->type = 'income';
-                $income->category = null;
-                $income->is_deductible = false;
-                return $income;
+            ->map(function ($item) {
+                $item->type = 'income';
+                return $item;
             });
 
         $expenses = Expense::where('user_id', $user->id)
-            ->with('category')
-            ->select('id', 'description', 'amount', 'date', 'status', 'category_id')
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->with(['category', 'paymentMethod'])
+            ->orderBy('date', 'desc')
             ->get()
-            ->map(function ($expense) {
-                $expense->type = 'expense';
-                $expense->category = $expense->category?->name;
-                $expense->is_deductible = false;
-                return $expense;
+            ->map(function ($item) {
+                $item->type = 'expense';
+                return $item;
             });
 
-        $transactions = $incomes->concat($expenses)->sortByDesc('date')->take(10);
+        $transactions = $incomes->concat($expenses)->sortByDesc('date');
 
-        return view('dashboard', [
-            'totalIncome' => $totalIncome,
-            'totalExpenses' => $totalExpenses,
-            'netBalance' => $netBalance,
-            'recentIncomes' => $recentIncomes,
-            'recentExpenses' => $recentExpenses,
-            'activeSavings' => $activeSavings,
-            'expensesByCategory' => $expensesByCategory,
-            'estTaxSavings' => $estTaxSavings,
-            'transactions' => $transactions,
-        ]);
+        // 6. Tax Savings (Dummy calculation or based on dedicated view)
+        // Let's just pass a rough estimate
+        $estTaxSavings = $totalExpenses * 0.24; // Avg tax rate assumption
+
+        return view('dashboard', compact(
+            'selectedMonth',
+            'startOfMonth',
+            'totalIncome', 
+            'totalExpenses', 
+            'netBalance', 
+            'chartData', 
+            'expensesByCategory', 
+            'transactions',
+            'estTaxSavings',
+            'paymentMethods'
+        ));
     }
 }

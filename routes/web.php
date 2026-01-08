@@ -7,6 +7,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\TaxSummaryController;
+use App\Http\Controllers\SavingsController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -35,4 +36,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/income', [IncomeController::class, 'index'])->name('income');
     Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses');
     Route::get('/tax-summary', [TaxSummaryController::class, 'index'])->name('tax-summary');
+    
+    // Delete routes
+    Route::delete('/income/{id}', [IncomeController::class, 'destroy'])->name('income.destroy');
+    Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+
+    // Savings Route
+    Route::get('/savings', [SavingsController::class, 'index'])->name('savings');
 });

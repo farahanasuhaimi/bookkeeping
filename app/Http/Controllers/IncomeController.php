@@ -7,16 +7,21 @@ use App\Models\Income;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
+use App\Models\PaymentMethod;
+
 class IncomeController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
         $incomes = Income::where('user_id', $user->id)
+            ->with(['category', 'paymentMethod'])
             ->orderBy('date', 'desc')
             ->paginate(10);
+            
+        $paymentMethods = PaymentMethod::where('user_id', $user->id)->get();
 
-        return view('income', compact('incomes'));
+        return view('income', compact('incomes', 'paymentMethods'));
     }
 
     public function store(Request $request)

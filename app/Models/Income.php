@@ -17,7 +17,8 @@ class Income extends Model
         'notes',
         'category_id',
         'pcb_amount',
-        'attachment',
+        'payment_method_id',
+        'attachment_path',
     ];
 
     protected $casts = [
@@ -33,5 +34,10 @@ class Income extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function paymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class);
     }
 }

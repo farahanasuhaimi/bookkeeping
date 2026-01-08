@@ -62,11 +62,38 @@
                             <option value="8">Other</option>
                         </select>
                     </div>
+                    
+                    <!-- Payment Method -->
+                    <div>
+                        <label for="payment_method" class="block text-sm font-medium text-text-main dark:text-white mb-2">Payment Method</label>
+                        <div class="flex gap-2">
+                             <select id="payment_method" name="payment_method_id" required class="flex-1 rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-white/5 px-4 py-2.5 text-text-main dark:text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50">
+                                <option value="">Select Method</option>
+                                @if(isset($paymentMethods))
+                                    @foreach($paymentMethods as $method)
+                                        <option value="{{ $method->id }}">{{ $method->name }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                             <button type="button" class="flex items-center justify-center rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-white/5 px-3 text-text-muted hover:text-primary transition-colors" title="Manage Methods">
+                                <span class="material-symbols-outlined">settings</span>
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- Date -->
                     <div>
                         <label for="date" class="block text-sm font-medium text-text-main dark:text-white mb-2">Date</label>
                         <input type="date" id="date" name="date" required class="w-full rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-white/5 px-4 py-2.5 text-text-main dark:text-white focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50">
+                    </div>
+
+                    <!-- Attachment -->
+                    <div>
+                        <label for="attachment" class="block text-sm font-medium text-text-main dark:text-white mb-2">Attachment (Optional)</label>
+                        <div class="relative">
+                            <input type="file" id="attachment" name="attachment" accept="image/*,.pdf" class="block w-full text-sm text-text-muted dark:text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                        </div>
+                        <p class="mt-1 text-xs text-text-muted dark:text-gray-500">Max 10MB. Images or PDF.</p>
                     </div>
 
                     <!-- Tax Deductible (Expenses only) -->
@@ -158,19 +185,26 @@
                 e.preventDefault();
 
                 const formData = new FormData(this);
-                const data = Object.fromEntries(formData);
-
-                // Convert string to boolean for checkbox
-                data.is_deductible = formData.has('is_deductible') ? true : false;
+                // No need to convert is_deductible manually if using FormData, 
+                // but if we need boolean specifically for JSON validation on some servers it matters.
+                // However, we are sending FormData (multipart/form-data) now for file upload support.
+                
+                // Add required checkboxes if unchecked (FormData doesn't include unchecked checkboxes)
+                if (!formData.has('is_deductible')) {
+                    formData.append('is_deductible', '0');
+                } else {
+                     // Ensure it sends '1' or 'true'
+                     formData.set('is_deductible', '1');
+                }
 
                 try {
                     const response = await fetch('{{ route("transactions.store") }}', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
+                            // 'Content-Type': 'multipart/form-data', // DO NOT SET THIS! Browser sets it with boundary.
                             'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
                         },
-                        body: JSON.stringify(data),
+                        body: formData,
                     });
 
                     const result = await response.json();

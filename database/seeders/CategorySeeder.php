@@ -26,7 +26,13 @@ class CategorySeeder extends Seeder
             8 => 'Equipment',
             9 => 'Professional Services',
             10 => 'Other',
-            11 => 'Entertainment'
+            11 => 'Entertainment',
+            12 => 'EPF Contribution',
+            13 => 'Zakat',
+            14 => 'Life Insurance',
+            15 => 'Medical Insurance',
+            16 => 'SSPN Savings',
+            17 => 'PRS (Private Retirement)'
         ];
 
         foreach ($expenses as $id => $name) {
