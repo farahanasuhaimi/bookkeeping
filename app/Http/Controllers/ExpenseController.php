@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Expense;
+use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -13,10 +14,13 @@ class ExpenseController extends Controller
     {
         $user = Auth::user();
         $expenses = Expense::where('user_id', $user->id)
+            ->with('category')
             ->orderBy('date', 'desc')
             ->paginate(10);
+            
+        $categories = Category::where('type', 'expense')->get();
 
-        return view('expense', compact('expenses'));
+        return view('expense', compact('expenses', 'categories'));
     }
 
     public function store(Request $request)

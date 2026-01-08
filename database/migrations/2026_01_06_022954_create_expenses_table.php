@@ -19,6 +19,8 @@ return new class extends Migration
             $table->decimal('amount', 12, 2);
             $table->date('date');
             $table->string('payment_method')->nullable(); // e.g., Cash, Card, Bank Transfer
+            $table->boolean('is_deductible')->default(false);
+            $table->text('notes')->nullable();
             $table->enum('status', ['pending', 'completed', 'refunded'])->default('completed');
             $table->string('receipt_url')->nullable();
             $table->timestamps();

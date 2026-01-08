@@ -40,7 +40,7 @@
                     </div>
                     <p class="text-text-muted dark:text-gray-400 text-sm font-medium">Total Gross Income</p>
                 </div>
-                <p class="text-text-main dark:text-white text-2xl font-bold tracking-tight">RM 124,500.00</p>
+                <p class="text-text-main dark:text-white text-2xl font-bold tracking-tight">RM {{ number_format($totalIncome, 2) }}</p>
                 <div class="flex items-center text-xs text-green-600 dark:text-green-400 mt-1">
                     <span class="material-symbols-outlined text-sm mr-0.5">trending_up</span>
                     <span>+12% from 2022</span>
@@ -54,9 +54,9 @@
                     </div>
                     <p class="text-text-muted dark:text-gray-400 text-sm font-medium">Approved Reliefs</p>
                 </div>
-                <p class="text-text-main dark:text-white text-2xl font-bold tracking-tight">RM 21,400.00</p>
+                <p class="text-text-main dark:text-white text-2xl font-bold tracking-tight">RM {{ number_format($totalReliefs, 2) }}</p>
                 <div class="flex items-center text-xs text-text-muted dark:text-gray-500 mt-1">
-                    <span>17.1% of Gross Income</span>
+                    <span>{{ $totalIncome > 0 ? number_format(($totalReliefs / $totalIncome) * 100, 1) : 0 }}% of Gross Income</span>
                 </div>
             </div>
             <!-- Card 3 -->
@@ -67,7 +67,7 @@
                     </div>
                     <p class="text-text-muted dark:text-gray-400 text-sm font-medium">Chargeable Income</p>
                 </div>
-                <p class="text-text-main dark:text-white text-2xl font-bold tracking-tight">RM 103,100.00</p>
+                <p class="text-text-main dark:text-white text-2xl font-bold tracking-tight">RM {{ number_format($chargeableIncome, 2) }}</p>
                 <div class="flex items-center text-xs text-orange-600 dark:text-orange-400 mt-1">
                     <span>Tax Bracket E (19-24%)</span>
                 </div>
@@ -83,7 +83,7 @@
                     </div>
                     <p class="text-text-main dark:text-white text-sm font-bold">Net Tax Payable</p>
                 </div>
-                <p class="text-text-main dark:text-white text-2xl font-black tracking-tight relative z-10">RM 4,250.00</p>
+                <p class="text-text-main dark:text-white text-2xl font-black tracking-tight relative z-10">RM {{ number_format($netTaxPayable, 2) }}</p>
                 <div class="flex items-center text-xs text-text-muted dark:text-gray-400 mt-1 relative z-10">
                     <span>Before PCB deduction</span>
                 </div>
@@ -107,7 +107,7 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-3">
-                                <span class="text-text-main dark:text-white font-bold">RM 124,500.00</span>
+                                <span class="text-text-main dark:text-white font-bold">RM {{ number_format($totalIncome, 2) }}</span>
                                 <span class="material-symbols-outlined text-text-muted transition-transform group-open:rotate-180">expand_more</span>
                             </div>
                         </summary>
@@ -115,7 +115,7 @@
                             <div class="flex flex-col gap-3">
                                 <div class="flex justify-between items-center text-sm">
                                     <span class="text-text-muted dark:text-gray-400">Employment Income (Salary, Bonus)</span>
-                                    <span class="font-medium text-text-main dark:text-white">RM 118,000.00</span>
+                                    <span class="font-medium text-text-main dark:text-white">RM {{ number_format($totalIncome, 2) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center text-sm">
                                     <span class="text-text-muted dark:text-gray-400">Allowances &amp; Perquisites</span>
@@ -127,7 +127,7 @@
                                 </div>
                                 <div class="flex justify-between items-center text-sm pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
                                     <span class="text-text-main dark:text-white font-semibold">Total Aggregated Income</span>
-                                    <span class="font-bold text-text-main dark:text-white">RM 124,500.00</span>
+                                    <span class="font-bold text-text-main dark:text-white">RM {{ number_format($totalIncome, 2) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -145,7 +145,7 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-3">
-                                <span class="text-text-main dark:text-white font-bold">- RM 500.00</span>
+                                <span class="text-text-main dark:text-white font-bold">- RM {{ number_format($zakatPaid, 2) }}</span>
                                 <span class="material-symbols-outlined text-text-muted transition-transform group-open:rotate-180">expand_more</span>
                             </div>
                         </summary>
@@ -157,7 +157,7 @@
                                 </div>
                                 <div class="flex justify-between items-center text-sm">
                                     <span class="text-text-muted dark:text-gray-400">Zakat &amp; Fitrah (Rebate deduction applied later)</span>
-                                    <span class="font-medium text-text-main dark:text-white">RM 500.00</span>
+                                    <span class="font-medium text-text-main dark:text-white">RM {{ number_format($zakatPaid, 2) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -175,7 +175,7 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-3">
-                                <span class="text-text-main dark:text-white font-bold text-green-600 dark:text-green-400">- RM 21,400.00</span>
+                                <span class="text-text-main dark:text-white font-bold text-green-600 dark:text-green-400">- RM {{ number_format($totalReliefs, 2) }}</span>
                                 <span class="material-symbols-outlined text-text-muted transition-transform group-open:rotate-180">expand_more</span>
                             </div>
                         </summary>
@@ -204,7 +204,7 @@
                                         <span class="text-xs text-text-muted dark:text-gray-400">Books, Internet, Sports, Devices</span>
                                     </div>
                                     <div class="text-right">
-                                        <span class="text-sm font-bold text-text-main dark:text-white">RM 2,250.00</span>
+                                        <span class="text-sm font-bold text-text-main dark:text-white">RM {{ number_format($lifestyleRelief, 2) }}</span>
                                         <span class="text-xs text-text-muted block">Max: RM 2,500</span>
                                     </div>
                                 </div>
@@ -261,25 +261,25 @@
                     <div class="p-5 flex flex-col gap-4">
                         <div class="flex justify-between items-center">
                             <span class="text-sm text-text-muted dark:text-gray-400">Net Tax Payable</span>
-                            <span class="font-bold text-text-main dark:text-white">RM 4,250.00</span>
+                            <span class="font-bold text-text-main dark:text-white">RM {{ number_format($netTaxPayable, 2) }}</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-1">
                                 <span class="text-sm text-text-muted dark:text-gray-400">Less: Zakat Rebate</span>
                             </div>
-                            <span class="font-medium text-green-600 dark:text-green-400">- RM 500.00</span>
+                            <span class="font-medium text-green-600 dark:text-green-400">- RM {{ number_format($zakatPaid, 2) }}</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-1">
                                 <span class="text-sm text-text-muted dark:text-gray-400">Less: PCB Paid (MTD)</span>
                                 <span class="material-symbols-outlined text-[16px] text-text-muted cursor-help" title="Potongan Cukai Berjadual deducted from your monthly salary">help</span>
                             </div>
-                            <span class="font-medium text-green-600 dark:text-green-400">- RM 3,800.00</span>
+                            <span class="font-medium text-green-600 dark:text-green-400">- RM {{ number_format($pcbPaid, 2) }}</span>
                         </div>
                         <div class="h-px bg-border-light dark:bg-border-dark my-1"></div>
                         <div class="flex justify-between items-end">
                             <span class="text-sm font-bold text-text-main dark:text-white">Balance to Pay</span>
-                            <span class="text-2xl font-black text-red-600 dark:text-red-400">RM -50.00</span>
+                            <span class="text-2xl font-black {{ $balanceToPay > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400' }}">RM {{ number_format($balanceToPay, 2) }}</span>
                         </div>
                         <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 flex items-start gap-2">
                             <span class="material-symbols-outlined text-green-600 dark:text-green-400 mt-0.5">check_circle</span>

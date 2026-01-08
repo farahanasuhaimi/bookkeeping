@@ -131,22 +131,21 @@
 
             function updateCategoryOptions(type) {
                 const incomeOptions = [
-                    { value: 'salary', text: 'Salary' },
-                    { value: 'freelance', text: 'Freelance Work' },
-                    { value: 'business', text: 'Business Income' },
-                    { value: 'investment', text: 'Investment Returns' },
-                    { value: 'other', text: 'Other Income' }
+                    { value: '1', text: 'Official Employment' },
+                    { value: '2', text: 'Part-time / Business' },
+                    { value: '', text: 'Other (Uncategorized)' }
                 ];
 
                 const expenseOptions = [
-                    { value: 'housing', text: 'Housing' },
-                    { value: 'transport', text: 'Transport' },
-                    { value: 'lifestyle', text: 'Lifestyle' },
-                    { value: 'food', text: 'Food & Dining' },
-                    { value: 'utilities', text: 'Utilities' },
-                    { value: 'equipment', text: 'Equipment' },
-                    { value: 'professional', text: 'Professional Services' },
-                    { value: 'other', text: 'Other' }
+                    { value: '3', text: 'Housing' },
+                    { value: '4', text: 'Transport' },
+                    { value: '5', text: 'Lifestyle' },
+                    { value: '6', text: 'Food & Dining' },
+                    { value: '7', text: 'Utilities' },
+                    { value: '8', text: 'Equipment' },
+                    { value: '9', text: 'Professional Services' },
+                    { value: '10', text: 'Other' },
+                    { value: '11', text: 'Entertainment' }
                 ];
 
                 const options = type === 'income' ? incomeOptions : expenseOptions;

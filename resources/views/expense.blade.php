@@ -30,38 +30,28 @@
                     <div class="mb-8">
                         <label class="text-text-primary-light dark:text-text-primary-dark text-sm font-semibold mb-3 block">Expense Category</label>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <!-- Option 1: Office -->
+                            @foreach($categories as $category)
                             <label class="relative flex flex-col items-center gap-3 p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:has-[:checked]:bg-primary/10">
-                                <input class="peer sr-only" name="category_id" type="radio" value="3" required/>
+                                <input class="peer sr-only" name="category_id" type="radio" value="{{ $category->id }}" required/>
                                 <div class="size-10 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center">
-                                    <span class="material-symbols-outlined">desk</span>
+                                    <span class="material-symbols-outlined">
+                                        {{ match(strtolower($category->name)) {
+                                            'housing' => 'home',
+                                            'transport' => 'directions_car',
+                                            'utilities' => 'bolt',
+                                            'food & dining' => 'restaurant',
+                                            'entertainment' => 'confirmation_number', // ticket icon
+                                            'lifestyle' => 'fitness_center',
+                                            'equipment' => 'computer',
+                                            'professional services' => 'work',
+                                            'other' => 'more_horiz',
+                                            default => 'category'
+                                        } }}
+                                    </span>
                                 </div>
-                                <span class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm">Office</span>
+                                <span class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm text-center">{{ $category->name }}</span>
                             </label>
-                            <!-- Option 2: Transport -->
-                            <label class="relative flex flex-col items-center gap-3 p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:has-[:checked]:bg-primary/10">
-                                <input class="peer sr-only" name="category_id" type="radio" value="4"/>
-                                <div class="size-10 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center">
-                                    <span class="material-symbols-outlined">directions_car</span>
-                                </div>
-                                <span class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm">Transport</span>
-                            </label>
-                            <!-- Option 3: Utilities -->
-                            <label class="relative flex flex-col items-center gap-3 p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:has-[:checked]:bg-primary/10">
-                                <input class="peer sr-only" name="category_id" type="radio" value="5"/>
-                                <div class="size-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                                    <span class="material-symbols-outlined">bolt</span>
-                                </div>
-                                <span class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm">Utilities</span>
-                            </label>
-                            <!-- Option 4: Other -->
-                            <label class="relative flex flex-col items-center gap-3 p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 cursor-pointer transition-all has-[:checked]:border-primary has-[:checked]:bg-primary/5 dark:has-[:checked]:bg-primary/10">
-                                <input class="peer sr-only" name="category_id" type="radio" value="6"/>
-                                <div class="size-10 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 flex items-center justify-center">
-                                    <span class="material-symbols-outlined">more_horiz</span>
-                                </div>
-                                <span class="text-text-primary-light dark:text-text-primary-dark font-medium text-sm">Other</span>
-                            </label>
+                            @endforeach
                         </div>
                         @error('category_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     </div>

@@ -88,6 +88,22 @@
     </aside>
     <!-- Main Content -->
     <main class="flex-1 overflow-y-auto">
+        @if(session('success'))
+            <div class="m-4 mb-0 rounded-lg bg-green-50 p-4 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                <div class="flex">
+                    <span class="material-symbols-outlined mr-2">check_circle</span>
+                    <span class="font-medium">{{ session('success') }}</span>
+                </div>
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="m-4 mb-0 rounded-lg bg-red-50 p-4 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                <div class="flex">
+                    <span class="material-symbols-outlined mr-2">error</span>
+                    <span class="font-medium">{{ session('error') }}</span>
+                </div>
+            </div>
+        @endif
         @yield('dashboard-content')
     </main>
 </div>

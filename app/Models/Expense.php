@@ -16,7 +16,7 @@ class Expense extends Model
         'status',
         'notes',
         'is_deductible',
-        'attachment',
+        'receipt_url',
     ];
 
     protected $casts = [
@@ -28,5 +28,10 @@ class Expense extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }

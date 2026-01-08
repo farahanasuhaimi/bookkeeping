@@ -45,7 +45,9 @@
                             <!-- Option 2 -->
                             <label class="relative flex items-start gap-4 p-4 rounded-xl border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark/50 cursor-pointer transition-all">
                                 <input class="peer sr-only" name="category_id" type="radio" value="2"/>
-                                <div class="mt-1 size-5 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center"></div>
+                                <div class="mt-1 size-5 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center peer-checked:bg-primary peer-checked:border-primary">
+                                    <div class="size-2.5 rounded-full bg-white hidden peer-checked:block"></div>
+                                </div>
                                 <div class="flex flex-col">
                                     <span class="text-text-primary-light dark:text-text-primary-dark font-medium text-base mb-1">Part-time / Business</span>
                                     <span class="text-text-secondary-light dark:text-text-secondary-dark text-sm">Form B (Freelance, Side Hustle)</span>
