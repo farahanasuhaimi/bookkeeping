@@ -22,10 +22,10 @@
                 </div>
             </div>
             <div class="flex gap-3">
-                <button class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-white dark:bg-card-dark border border-border-light dark:border-border-dark text-text-main dark:text-white text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm">
-                    <span class="material-symbols-outlined text-lg">print</span>
-                    <span class="truncate hidden sm:inline">Print</span>
-                </button>
+                <a href="{{ route('tax-summary.export', ['year' => $currentYear]) }}" class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-white dark:bg-card-dark border border-border-light dark:border-border-dark text-text-main dark:text-white text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm">
+                    <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+                    <span class="truncate hidden sm:inline">Download PDF</span>
+                </a>
                 <button class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary hover:bg-primary-dark text-text-main text-sm font-bold transition-colors shadow-lg shadow-primary/20">
                     <span class="material-symbols-outlined text-lg">table_view</span>
                     <span class="truncate">Export to Excel</span>

@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('expenses', ExpenseController::class);
 
     Route::get('/tax-summary', [TaxSummaryController::class, 'index'])->name('tax-summary');
+    Route::get('/tax-summary/export', [TaxSummaryController::class, 'exportPDF'])->name('tax-summary.export');
 
     // Savings Route
     Route::get('/saving-tracking', [SavingsController::class, 'index'])->name('saving-tracking');
