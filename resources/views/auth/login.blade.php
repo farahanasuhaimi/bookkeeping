@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>TaxKeep - Login</title>
+<title>RezTax - Login</title>
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -52,12 +52,12 @@
 <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary text-background-dark">
 <span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
 </div>
-<span class="text-white text-xl font-bold tracking-tight">TaxKeep</span>
+<span class="text-white text-xl font-bold tracking-tight">RezTax</span>
 </div>
 <!-- Quote Area -->
 <div class="relative z-10 max-w-md">
 <blockquote class="text-2xl font-medium text-white leading-relaxed mb-6">
-                "TaxKeep has revolutionized how we handle our annual LHDN filings. It's compliant, secure, and incredibly user-friendly."
+                "RezTax has revolutionized how we handle our annual LHDN filings. It's compliant, secure, and incredibly user-friendly."
             </blockquote>
 <div class="flex items-center gap-4">
 <img class="w-12 h-12 rounded-full border-2 border-primary object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAzuhFSENXzusJGrUyCFQTKpMf522kfur4RHTIUvFDAPqKrMGqt67igs94EHYwO1mqLuava7YSTKozN0c13JRt0yuHxh_H1iSOlibAN0wlK0Lt6A0sCwPrPfbo2GbaEqXN4y9_W7fYd4Duw3lOFNznCryTdrl2ZzA_KGR6z8LteQfyjVuJwXcBicqNVb2OjU9T3_2st9RK_12LLrwSiDosFaZoSUDJ7W697NGJW16_81J6Bwn65-lJjpTqjQldlzh79bddh2FGb6g" alt="Sarah Lim"/>
@@ -71,7 +71,7 @@
 <div class="relative z-10 text-xs text-white/40 flex gap-6">
 <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
 <a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
-<span>© 2024 TaxKeep Malaysia</span>
+<span>© 2026 RezTax Malaysia</span>
 </div>
 </div>
 <!-- Right Section: Form -->
@@ -82,11 +82,11 @@
 <div class="flex items-center justify-center w-8 h-8 rounded bg-primary text-background-dark">
 <span class="material-symbols-outlined text-xl">account_balance_wallet</span>
 </div>
-<span class="text-text-main dark:text-white text-lg font-bold">TaxKeep</span>
+<span class="text-text-main dark:text-white text-lg font-bold">RezTax</span>
 </div>
 <!-- Header -->
 <div class="mb-8">
-<h1 class="text-text-main dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em] mb-2">Welcome to TaxKeep</h1>
+<h1 class="text-text-main dark:text-white text-3xl sm:text-4xl font-black leading-tight tracking-[-0.033em] mb-2">Welcome to RezTax</h1>
 <p class="text-text-muted dark:text-gray-400 text-base font-normal">Simplify your Malaysian Tax Filing &amp; Bookkeeping.</p>
 </div>
 <!-- Tabs -->
@@ -164,7 +164,7 @@
 </form>
 <div class="mt-8 text-center">
 <p class="text-text-muted dark:text-gray-500 text-sm">
-                    New to TaxKeep? 
+                    New to RezTax? 
                     <a class="text-primary font-semibold hover:underline" href="{{ route('register') }}">Start your free trial</a>
 </p>
 </div>

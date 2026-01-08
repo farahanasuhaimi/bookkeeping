@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'TaxKeep - Register')
+@section('title', 'RezTax - Register')
 
 @section('content')
 <div class="flex h-screen w-full overflow-hidden">
@@ -19,12 +19,12 @@
             <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary text-background-dark">
                 <span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
             </div>
-            <span class="text-white text-xl font-bold tracking-tight">TaxKeep</span>
+            <span class="text-white text-xl font-bold tracking-tight">RezTax</span>
         </div>
         <!-- Quote Area -->
         <div class="relative z-10 max-w-md">
             <blockquote class="text-2xl font-medium text-white leading-relaxed mb-6">
-                "TaxKeep has revolutionized how we handle our annual LHDN filings. It's compliant, secure, and
+                "RezTax has revolutionized how we handle our annual LHDN filings. It's compliant, secure, and
                 incredibly user-friendly."
             </blockquote>
             <div class="flex items-center gap-4">
@@ -41,7 +41,7 @@
         <div class="relative z-10 text-xs text-white/40 flex gap-6">
             <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
             <a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
-            <span>© 2024 TaxKeep Malaysia</span>
+            <span>© 2026 RezTax Malaysia</span>
         </div>
     </div>
     <!-- Right Section: Form -->
@@ -52,7 +52,7 @@
                 <div class="flex items-center justify-center w-8 h-8 rounded bg-primary text-background-dark">
                     <span class="material-symbols-outlined text-xl">account_balance_wallet</span>
                 </div>
-                <span class="text-text-main dark:text-white text-lg font-bold">TaxKeep</span>
+                <span class="text-text-main dark:text-white text-lg font-bold">RezTax</span>
             </div>
             <!-- Header -->
             <div class="mb-8">

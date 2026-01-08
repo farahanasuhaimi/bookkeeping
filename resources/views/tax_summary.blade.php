@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+@extends('layouts.main')
 
 @section('dashboard-content')
 <div class="flex flex-col min-h-screen">

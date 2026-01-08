@@ -1,6 +1,4 @@
-@extends('layouts.dashboard')
-
-@extends('layouts.dashboard')
+@extends('layouts.main')
 
 @section('dashboard-content')
 <div class="flex h-screen w-full overflow-hidden">
@@ -15,10 +13,10 @@
                         <h1 class="text-text-primary-light dark:text-text-primary-dark text-3xl md:text-4xl font-black tracking-tight">Expenses</h1>
                         <p class="text-text-secondary-light dark:text-text-secondary-dark text-base">Manage your spending and tax deductions.</p>
                     </div>
-                    <button onclick="openTransactionModal('expense')" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-[#064e2a] font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark hover:text-white transition-all transform hover:-translate-y-0.5">
+                    <a href="{{ route('expenses.create') }}" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-[#064e2a] font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark hover:text-white transition-all transform hover:-translate-y-0.5">
                         <span class="material-symbols-outlined text-[20px]">add_circle</span>
                         <span>Add New Expense</span>
-                    </button>
+                    </a>
                 </div>
 
                 <!-- Data Table -->
@@ -92,9 +90,9 @@
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button class="p-1 rounded text-text-muted hover:bg-gray-100 dark:hover:bg-white/10 transition-colors" title="Edit (Coming Soon)">
+                                            <a href="{{ route('expenses.edit', $expense->id) }}" class="p-1 rounded text-text-muted hover:bg-gray-100 dark:hover:bg-white/10 transition-colors" title="Edit">
                                                 <span class="material-symbols-outlined text-[18px]">edit</span>
-                                            </button>
+                                            </a>
                                             <form action="{{ route('expenses.destroy', $expense->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this expense?');">
                                                 @csrf
                                                 @method('DELETE')

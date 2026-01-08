@@ -32,7 +32,7 @@
     <aside class="hidden w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark lg:flex">
         <div class="flex h-16 items-center px-6">
             <div class="flex flex-col">
-                <h1 class="text-text-main dark:text-white text-lg font-bold leading-normal tracking-tight">MyTaxBook</h1>
+                <h1 class="text-text-main dark:text-white text-lg font-bold leading-normal tracking-tight">RezTax</h1>
                 <p class="text-text-muted dark:text-gray-400 text-xs font-normal">Professional Plan</p>
             </div>
         </div>
@@ -42,12 +42,12 @@
                     <span class="material-symbols-outlined {{ request()->routeIs('dashboard') ? 'text-primary' : '' }}" style="font-variation-settings: 'FILL' 1;">dashboard</span>
                     <span class="text-sm font-medium">Dashboard</span>
                 </a>
-                <a class="group flex items-center gap-3 rounded-lg {{ request()->routeIs('income') ? 'bg-background-light dark:bg-white/5 text-text-main dark:text-white' : 'text-text-muted hover:bg-background-light hover:text-text-main dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white' }} px-3 py-2.5 transition-colors" href="{{ route('income') }}">
-                    <span class="material-symbols-outlined {{ request()->routeIs('income') ? 'text-primary' : '' }}">payments</span>
+                <a class="group flex items-center gap-3 rounded-lg {{ request()->routeIs('incomes.*') ? 'bg-background-light dark:bg-white/5 text-text-main dark:text-white' : 'text-text-muted hover:bg-background-light hover:text-text-main dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white' }} px-3 py-2.5 transition-colors" href="{{ route('incomes.index') }}">
+                    <span class="material-symbols-outlined {{ request()->routeIs('incomes.*') ? 'text-primary' : '' }}">payments</span>
                     <span class="text-sm font-medium">Income</span>
                 </a>
-                <a class="group flex items-center gap-3 rounded-lg {{ request()->routeIs('expenses') ? 'bg-background-light dark:bg-white/5 text-text-main dark:text-white' : 'text-text-muted hover:bg-background-light hover:text-text-main dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white' }} px-3 py-2.5 transition-colors" href="{{ route('expenses') }}">
-                    <span class="material-symbols-outlined {{ request()->routeIs('expenses') ? 'text-primary' : '' }}">receipt_long</span>
+                <a class="group flex items-center gap-3 rounded-lg {{ request()->routeIs('expenses.*') ? 'bg-background-light dark:bg-white/5 text-text-main dark:text-white' : 'text-text-muted hover:bg-background-light hover:text-text-main dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white' }} px-3 py-2.5 transition-colors" href="{{ route('expenses.index') }}">
+                    <span class="material-symbols-outlined {{ request()->routeIs('expenses.*') ? 'text-primary' : '' }}">receipt_long</span>
                     <span class="text-sm font-medium">Expenses</span>
                 </a>
                 <a class="group flex items-center gap-3 rounded-lg {{ request()->routeIs('tax-summary') ? 'bg-background-light dark:bg-white/5 text-text-main dark:text-white' : 'text-text-muted hover:bg-background-light hover:text-text-main dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white' }} px-3 py-2.5 transition-colors" href="{{ route('tax-summary') }}">

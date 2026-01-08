@@ -231,7 +231,7 @@ See `BACKEND_INTEGRATION.md` for complete guide.
 ### Desktop View
 ```
 ┌──────────────────────────────────────────┐
-│ MyTaxBook Dashboard                      │
+│ RezTax Dashboard                      │
 ├──────────────────────────────────────────┤
 │ ┌─────────────────┐  ┌────────────────┐  │
 │ │ Dashboard       │  │ Stats & Charts │  │
@@ -359,7 +359,7 @@ All files are in your project root directory.
 
 ## Conclusion
 
-✨ Your bookkeeping dashboard is now **fully functional for daily transaction entry** with:
+✨ Your RezTax dashboard is now **fully functional for daily transaction entry** with:
 
 - ✅ Multiple intuitive entry points
 - ✅ Professional form modal

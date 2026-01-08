@@ -27,19 +27,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
-    // Transaction routes
-    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
-    Route::get('/transactions/combined', [TransactionController::class, 'getCombined'])->name('transactions.combined');
-    Route::get('/transactions/monthly', [TransactionController::class, 'getMonthly'])->name('transactions.monthly');
+    // Income Resource Routes
+    Route::resource('incomes', IncomeController::class);
 
-    // New routes
-    Route::get('/income', [IncomeController::class, 'index'])->name('income');
-    Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses');
+    // Expense Resource Routes
+    Route::resource('expenses', ExpenseController::class);
+
     Route::get('/tax-summary', [TaxSummaryController::class, 'index'])->name('tax-summary');
-    
-    // Delete routes
-    Route::delete('/income/{id}', [IncomeController::class, 'destroy'])->name('income.destroy');
-    Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
 
     // Savings Route
     Route::get('/savings', [SavingsController::class, 'index'])->name('savings');

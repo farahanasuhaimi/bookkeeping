@@ -1,6 +1,4 @@
-@extends('layouts.dashboard')
-
-@extends('layouts.dashboard')
+@extends('layouts.main')
 
 @section('dashboard-content')
 <div class="flex h-screen w-full overflow-hidden">
@@ -15,10 +13,10 @@
                         <h1 class="text-text-primary-light dark:text-text-primary-dark text-3xl md:text-4xl font-black tracking-tight">Income Records</h1>
                         <p class="text-text-secondary-light dark:text-text-secondary-dark text-base">Track your earnings and ensure all sources are documented.</p>
                     </div>
-                    <button onclick="openTransactionModal('income')" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-[#064e2a] font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark hover:text-white transition-all transform hover:-translate-y-0.5">
+                    <a href="{{ route('incomes.create') }}" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-[#064e2a] font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark hover:text-white transition-all transform hover:-translate-y-0.5">
                         <span class="material-symbols-outlined text-[20px]">add_circle</span>
                         <span>Add New Income</span>
-                    </button>
+                    </a>
                 </div>
 
                 <!-- Stats Summary (Optional idea for future, keep simple for now) -->
@@ -70,10 +68,10 @@
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button class="p-1 rounded text-text-muted hover:bg-gray-100 dark:hover:bg-white/10 transition-colors" title="Edit (Coming Soon)">
+                                            <a href="{{ route('incomes.edit', $income->id) }}" class="p-1 rounded text-text-muted hover:bg-gray-100 dark:hover:bg-white/10 transition-colors" title="Edit">
                                                 <span class="material-symbols-outlined text-[18px]">edit</span>
-                                            </button>
-                                            <form action="{{ route('income.destroy', $income->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this record?');">
+                                            </a>
+                                            <form action="{{ route('incomes.destroy', $income->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this record?');">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="p-1 rounded text-text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" title="Delete">

@@ -26,54 +26,93 @@ class ExpenseController extends Controller
         return view('expense', compact('expenses', 'categories', 'paymentMethods'));
     }
 
+    public function create()
+    {
+        $user = Auth::user();
+        $categories = Category::where('type', 'expense')->get();
+        $paymentMethods = PaymentMethod::where('user_id', $user->id)->get();
+        return view('expenses.create', compact('categories', 'paymentMethods'));
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'description' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0.01',
             'date' => 'required|date',
-            'category_id' => 'nullable|integer',
+            'category_id' => 'nullable|exists:categories,id', // Validated against DB
+            'payment_method_id' => 'required|exists:payment_methods,id',
+            'is_deductible' => 'boolean',
             'notes' => 'nullable|string',
-            'attachment' => 'nullable|file|max:10240',
+            'attachment' => 'nullable|file|max:10240|mimes:jpeg,png,pdf,jpg',
         ]);
 
         try {
-            $expense = Expense::create([
+            $attachmentPath = null;
+            if ($request->hasFile('attachment')) {
+                $attachmentPath = $request->file('attachment')->store('attachments', 'public');
+            }
+
+            // Handle checkbox boolean which might be missing in some setups, strictly cast it
+            $isDeductible = $request->has('is_deductible') ? true : false;
+
+            Expense::create([
                 'user_id' => Auth::id(),
                 'description' => $validated['description'],
                 'amount' => $validated['amount'],
                 'date' => $validated['date'],
                 'category_id' => $validated['category_id'] ?? null,
                 'status' => 'completed',
-                'payment_method' => 'other',
+                'payment_method_id' => $validated['payment_method_id'],
+                'is_deductible' => $isDeductible,
                 'notes' => $validated['notes'] ?? null,
+                'attachment_path' => $attachmentPath,
             ]);
 
-            if ($request->hasFile('attachment')) {
-                $path = $request->file('attachment')->store('attachments', 'public');
-                $expense->update(['receipt_url' => $path]);
-            }
-
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Expense added successfully.',
-                    'data' => $expense,
-                ]);
-            }
-
-            return redirect()->back()->with('success', 'Expense added successfully.');
+            return redirect()->route('expenses.index')->with('success', 'Expense added successfully.');
         } catch (\Exception $e) {
             Log::error('Expense save error: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Failed to save expense: ' . $e->getMessage()])->withInput();
+        }
+    }
 
-            if ($request->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to save expense: ' . $e->getMessage(),
-                ], 500);
+    public function edit($id)
+    {
+        $user = Auth::user();
+        $expense = Expense::where('user_id', $user->id)->findOrFail($id);
+        $categories = Category::where('type', 'expense')->get();
+        $paymentMethods = PaymentMethod::where('user_id', $user->id)->get();
+        return view('expenses.create', compact('expense', 'categories', 'paymentMethods'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $expense = Expense::where('user_id', Auth::id())->findOrFail($id);
+
+        $validated = $request->validate([
+            'description' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0.01',
+            'date' => 'required|date',
+            'category_id' => 'nullable|exists:categories,id',
+            'payment_method_id' => 'required|exists:payment_methods,id',
+            'is_deductible' => 'boolean',
+            'notes' => 'nullable|string',
+            'attachment' => 'nullable|file|max:10240|mimes:jpeg,png,pdf,jpg',
+        ]);
+
+        try {
+            if ($request->hasFile('attachment')) {
+                $validated['attachment_path'] = $request->file('attachment')->store('attachments', 'public');
             }
 
-            return redirect()->back()->withErrors(['error' => 'Failed to save expense.'])->withInput();
+            $validated['is_deductible'] = $request->has('is_deductible');
+
+            $expense->update($validated);
+
+            return redirect()->route('expenses.index')->with('success', 'Expense updated successfully.');
+        } catch (\Exception $e) {
+            Log::error('Expense update error: ' . $e->getMessage());
+            return redirect()->back()->withErrors(['error' => 'Failed to update expense.'])->withInput();
         }
     }
 
@@ -81,13 +120,6 @@ class ExpenseController extends Controller
     {
         $expense = Expense::where('user_id', Auth::id())->findOrFail($id);
         $expense->delete();
-
-        if (request()->wantsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Expense deleted successfully.',
-            ]);
-        }
 
         return redirect()->back()->with('success', 'Expense deleted successfully.');
     }
