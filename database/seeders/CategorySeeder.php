@@ -15,6 +15,8 @@ class CategorySeeder extends Seeder
         // Income Categories (IDs 1-2 based on view hardcoding)
         Category::firstOrCreate(['id' => 1], ['name' => 'Official Employment', 'type' => 'income']);
         Category::firstOrCreate(['id' => 2], ['name' => 'Part-time / Business', 'type' => 'income']);
+        Category::firstOrCreate(['id' => 18], ['name' => 'Rental Income', 'type' => 'income']);
+        Category::firstOrCreate(['id' => 19], ['name' => 'Dividends / Interest', 'type' => 'income']);
 
         // Expense Categories (General)
         $expenses = [

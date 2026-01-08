@@ -10,72 +10,97 @@ class TaxSummaryController extends Controller
     {
         $user = auth()->user();
 
-        // 1. Calculate Total Annual Income
-        $totalIncome = \App\Models\Income::where('user_id', $user->id)
-            ->whereYear('date', date('Y')) // Assuming current year for now
+        // 1. Calculate Total Annual Income & PCB Paid
+        $currentYear = date('Y');
+        $incomeData = \App\Models\Income::where('user_id', $user->id)
+            ->whereYear('date', $currentYear)
             ->where('status', 'confirmed')
-            ->sum('amount');
+            ->selectRaw('SUM(amount) as total_income, SUM(pcb_amount) as total_pcb')
+            ->first();
 
-        // 2. Calculate Total Deductions (Reliefs)
-        // Hardcoded standard relief for now + basic logic
-        $standardRelief = 9000;
+        $totalIncome = $incomeData->total_income ?? 0;
+        $pcbPaid = $incomeData->total_pcb ?? 0;
+
+        // Breakdown income by category for Section A
+        $incomeBreakdown = \App\Models\Income::where('user_id', $user->id)
+            ->whereYear('date', $currentYear)
+            ->where('status', 'confirmed')
+            ->selectRaw('category_id, SUM(amount) as total')
+            ->groupBy('category_id')
+            ->pluck('total', 'category_id');
+
+        $employmentIncome = $incomeBreakdown[1] ?? 0;
+        $rentalIncome = $incomeBreakdown[18] ?? 0;
+        $otherIncome = ($incomeBreakdown[2] ?? 0) + ($incomeBreakdown[19] ?? 0); // Combined other sources
+
+        // 2. Calculate Total Deductions (Reliefs) - Based on YA 2026 LHDN Guidelines
+        $standardRelief = 9000; // Individual and dependent relatives
         
-        // Example dynamic relief based on expenses marked as deductible
-        $deductibleExpenses = \App\Models\Expense::where('user_id', $user->id)
-            ->whereYear('date', date('Y'))
+        // Fetch all relevant expenses for reliefs in one query for efficiency
+        $reliefCategories = [5, 12, 13, 14, 15]; // Lifestyle, EPF, Zakat, Life Ins, Med Ins
+        $expenseReliefs = \App\Models\Expense::where('user_id', $user->id)
+            ->whereYear('date', $currentYear)
+            ->whereIn('category_id', $reliefCategories)
             ->where('status', 'completed')
-            ->where('is_deductible', true)
-            ->sum('amount');
+            ->selectRaw('category_id, SUM(amount) as total')
+            ->groupBy('category_id')
+            ->pluck('total', 'category_id');
 
-        $epfRelief = 4000; // Mock value or calculated if data available
-        $insuranceRelief = 3000; // Mock value
-        $lifestyleReliefLimit = 2500;
+        // Combined limit for EPF and Life Insurance is RM 7,000
+        $epfReliefRaw = $expenseReliefs[12] ?? 0;
+        $insuranceReliefRaw = $expenseReliefs[14] ?? 0;
         
-        // Cap deductible expenses at lifestyle limit for this example logic
-        $lifestyleRelief = min($deductibleExpenses, $lifestyleReliefLimit);
+        // Sub-limits: RM 4k EPF / RM 3k Life Insurance
+        $epfRelief = min($epfReliefRaw, 4000);
+        $insuranceRelief = min($insuranceReliefRaw, 3000);
+        
+        $lifestyleReliefLimit = 2500;
+        $lifestyleRelief = min($expenseReliefs[5] ?? 0, $lifestyleReliefLimit);
 
-        $totalReliefs = $standardRelief + $epfRelief + $insuranceRelief + $lifestyleRelief;
+        $medicalReliefLimit = 4000; // Medical & Education Insurance (Combined limit effective YA 2025)
+        $medicalRelief = min($expenseReliefs[15] ?? 0, $medicalReliefLimit);
+
+        $totalReliefs = $standardRelief + $epfRelief + $insuranceRelief + $lifestyleRelief + $medicalRelief;
 
         // 3. Calculate Chargeable Income
         $chargeableIncome = max(0, $totalIncome - $totalReliefs);
 
-        // 4. Calculate Tax Payable (Simplified Tiered Calculation)
-        $taxPayable = $this->calculateTax($chargeableIncome);
+        // 4. Calculate Tax Payable (Refined Calculation)
+        $taxPayableBeforeRebate = $this->calculateTax($chargeableIncome);
 
-        $zakatPaid = 500; // Mock or from DB
-        $pcbPaid = \App\Models\Income::where('user_id', $user->id)
-            ->whereYear('date', date('Y'))
-            ->sum('pcb_amount') ?? 0;
-
-        $netTaxPayable = max(0, $taxPayable - $zakatPaid);
+        // 5. Apply Tax Rebates
+        $zakatPaid = $expenseReliefs[13] ?? 0; // Zakat is a direct tax rebate (1-to-1)
+        
+        $netTaxPayable = max(0, $taxPayableBeforeRebate - $zakatPaid);
         $balanceToPay = $netTaxPayable - $pcbPaid;
 
         return view('tax_summary', [
             'totalIncome' => $totalIncome,
+            'employmentIncome' => $employmentIncome,
+            'rentalIncome' => $rentalIncome,
+            'otherIncome' => $otherIncome,
             'totalReliefs' => $totalReliefs,
             'chargeableIncome' => $chargeableIncome,
-            'taxPayable' => $taxPayable,
+            'taxPayable' => $taxPayableBeforeRebate,
             'zakatPaid' => $zakatPaid,
             'pcbPaid' => $pcbPaid,
             'netTaxPayable' => $netTaxPayable,
             'balanceToPay' => $balanceToPay,
             'lifestyleRelief' => $lifestyleRelief,
             'lifestyleReliefLimit' => $lifestyleReliefLimit,
+            'medicalRelief' => $medicalRelief,
+            'medicalReliefLimit' => $medicalReliefLimit,
+            'epfRelief' => $epfRelief,
+            'epfReliefLimit' => 4000,
+            'insuranceRelief' => $insuranceRelief,
+            'insuranceReliefLimit' => 3000,
         ]);
     }
 
     private function calculateTax($amount)
     {
-        // 2023 Tax Rates (Simplified for Example)
-        // 0 - 5,000: 0%
-        // 5,001 - 20,000: 1%
-        // 20,001 - 35,000: 3%
-        // 35,001 - 50,000: 8%
-        // 50,001 - 70,000: 13%
-        // 70,001 - 100,000: 21%
-        // 100,001 - 250,000: 24%
-        // 250,001 - 400,000: 24.5%
-        
+        // 2026 Tax Rates (Simplified for Example)
+        // reference: https://www.hasil.gov.my/en/individual/individual-tax-role-know-your-tax-tax-rate/
         $tax = 0;
 
         if ($amount > 100000) {

@@ -8,14 +8,14 @@
             <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-2">
                     <h1 class="text-text-main dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Tax Summary</h1>
-                    <span class="inline-flex items-center rounded-md bg-green-50 dark:bg-green-900/30 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-400 ring-1 ring-inset ring-green-600/20">YA 2023</span>
+                    <span class="inline-flex items-center rounded-md bg-green-50 dark:bg-green-900/30 px-2 py-1 text-xs font-medium text-green-700 dark:text-green-400 ring-1 ring-inset ring-green-600/20">YA 2026</span>
                 </div>
                 <div class="flex items-center gap-2 text-text-muted dark:text-gray-400">
                     <span>Year of Assessment: </span>
                     <select class="bg-transparent border-none py-0 pl-0 pr-8 text-base font-semibold text-primary focus:ring-0 cursor-pointer">
-                        <option>2023</option>
-                        <option>2022</option>
-                        <option>2021</option>
+                        <option>2026</option>
+                        <option>2025</option>
+                        <option>2024</option>
                     </select>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                 <p class="text-text-main dark:text-white text-2xl font-bold tracking-tight">RM {{ number_format($totalIncome, 2) }}</p>
                 <div class="flex items-center text-xs text-green-600 dark:text-green-400 mt-1">
                     <span class="material-symbols-outlined text-sm mr-0.5">trending_up</span>
-                    <span>+12% from 2022</span>
+                    <span>+12% from 2025</span>
                 </div>
             </div>
             <!-- Card 2 -->
@@ -114,16 +114,16 @@
                         <div class="border-t border-border-light dark:border-border-dark p-5 bg-gray-50/50 dark:bg-gray-900/20">
                             <div class="flex flex-col gap-3">
                                 <div class="flex justify-between items-center text-sm">
-                                    <span class="text-text-muted dark:text-gray-400">Employment Income (Salary, Bonus)</span>
-                                    <span class="font-medium text-text-main dark:text-white">RM {{ number_format($totalIncome, 2) }}</span>
-                                </div>
-                                <div class="flex justify-between items-center text-sm">
-                                    <span class="text-text-muted dark:text-gray-400">Allowances &amp; Perquisites</span>
-                                    <span class="font-medium text-text-main dark:text-white">RM 4,500.00</span>
+                                    <span class="text-text-muted dark:text-gray-400">Employment Income (EA Form)</span>
+                                    <span class="font-medium text-text-main dark:text-white">RM {{ number_format($employmentIncome, 2) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center text-sm">
                                     <span class="text-text-muted dark:text-gray-400">Rental Income (Net)</span>
-                                    <span class="font-medium text-text-main dark:text-white">RM 2,000.00</span>
+                                    <span class="font-medium text-text-main dark:text-white">RM {{ number_format($rentalIncome, 2) }}</span>
+                                </div>
+                                <div class="flex justify-between items-center text-sm">
+                                    <span class="text-text-muted dark:text-gray-400">Other (Part-time, Business, etc.)</span>
+                                    <span class="font-medium text-text-main dark:text-white">RM {{ number_format($otherIncome, 2) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center text-sm pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
                                     <span class="text-text-main dark:text-white font-semibold">Total Aggregated Income</span>
@@ -156,8 +156,8 @@
                                     <span class="font-medium text-text-main dark:text-white">RM 0.00</span>
                                 </div>
                                 <div class="flex justify-between items-center text-sm">
-                                    <span class="text-text-muted dark:text-gray-400">Zakat &amp; Fitrah (Rebate deduction applied later)</span>
-                                    <span class="font-medium text-text-main dark:text-white">RM {{ number_format($zakatPaid, 2) }}</span>
+                                    <span class="text-text-muted dark:text-gray-400">Zakat &amp; Fitrah (1-to-1 direct tax rebate)</span>
+                                    <span class="font-medium text-green-600 dark:text-green-400">- RM {{ number_format($zakatPaid, 2) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -184,8 +184,8 @@
                             <div class="flex flex-col gap-2">
                                 <div class="flex justify-between items-end">
                                     <div class="flex flex-col">
-                                        <span class="text-sm font-semibold text-text-main dark:text-white">Individual Relief</span>
-                                        <span class="text-xs text-text-muted dark:text-gray-400">Automatic deduction for self</span>
+                                        <span class="text-sm font-semibold text-text-main dark:text-white">Individual &amp; Dependent Relief</span>
+                                        <span class="text-xs text-text-muted dark:text-gray-400">Automatic standard deduction for self</span>
                                     </div>
                                     <div class="text-right">
                                         <span class="text-sm font-bold text-text-main dark:text-white">RM 9,000.00</span>
@@ -209,16 +209,16 @@
                                     </div>
                                 </div>
                                 <div class="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                                    <div class="h-full bg-primary w-[90%] rounded-full"></div>
+                                    <div class="h-full bg-primary rounded-full transition-all" style="width: {{ ($lifestyleRelief / $lifestyleReliefLimit) * 100 }}%"></div>
                                 </div>
-                                <div class="text-xs text-primary font-medium text-right">RM 250.00 quota remaining</div>
+                                <div class="text-xs text-primary font-medium text-right">RM {{ number_format($lifestyleReliefLimit - $lifestyleRelief, 2) }} quota remaining</div>
                             </div>
                             <!-- Relief Item 3 -->
                             <div class="flex flex-col gap-2">
                                 <div class="flex justify-between items-end">
                                     <div class="flex flex-col">
                                         <span class="text-sm font-semibold text-text-main dark:text-white">Life Insurance &amp; EPF</span>
-                                        <span class="text-xs text-text-muted dark:text-gray-400">Restricted to RM4k EPF + RM3k Life Ins.</span>
+                                        <span class="text-xs text-text-muted dark:text-gray-400">Restricted: RM 4k EPF + RM 3k Life Insurance</span>
                                     </div>
                                     <div class="text-right">
                                         <span class="text-sm font-bold text-text-main dark:text-white">RM 7,000.00</span>
@@ -226,25 +226,25 @@
                                     </div>
                                 </div>
                                 <div class="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                                    <div class="h-full bg-primary w-full rounded-full"></div>
+                                    <div class="h-full bg-primary rounded-full" style="width: {{ (($epfRelief + $insuranceRelief) / ($epfReliefLimit + $insuranceReliefLimit)) * 100 }}%"></div>
                                 </div>
                             </div>
                             <!-- Relief Item 4 -->
                             <div class="flex flex-col gap-2">
                                 <div class="flex justify-between items-end">
                                     <div class="flex flex-col">
-                                        <span class="text-sm font-semibold text-text-main dark:text-white">Medical Expenses</span>
-                                        <span class="text-xs text-text-muted dark:text-gray-400">Serious diseases, fertility treatment</span>
+                                        <span class="text-sm font-semibold text-text-main dark:text-white">Medical &amp; Education Insurance</span>
+                                        <span class="text-xs text-text-muted dark:text-gray-400">Effective YA 2025 combined limit</span>
                                     </div>
                                     <div class="text-right">
-                                        <span class="text-sm font-bold text-text-main dark:text-white">RM 3,150.00</span>
-                                        <span class="text-xs text-text-muted block">Max: RM 10,000</span>
+                                        <span class="text-sm font-bold text-text-main dark:text-white">RM {{ number_format($medicalRelief, 2) }}</span>
+                                        <span class="text-xs text-text-muted block">Max: RM {{ number_format($medicalReliefLimit / 1000) }}k</span>
                                     </div>
                                 </div>
                                 <div class="h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                                    <div class="h-full bg-primary w-[31%] rounded-full"></div>
+                                    <div class="h-full bg-primary rounded-full" style="width: {{ ($medicalRelief / $medicalReliefLimit) * 100 }}%"></div>
                                 </div>
-                                <div class="text-xs text-primary font-medium text-right">RM 6,850.00 quota remaining</div>
+                                <div class="text-xs text-primary font-medium text-right">RM {{ number_format($medicalReliefLimit - $medicalRelief, 2) }} quota remaining</div>
                             </div>
                         </div>
                     </details>
@@ -312,9 +312,7 @@
                             <div class="flex-1 bg-gray-200 dark:bg-gray-700" title="100k+"></div>
                             <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-r-sm" title="400k+"></div>
                         </div>
-                        <p class="text-xs text-text-muted dark:text-gray-400 leading-relaxed">
-                            Your chargeable income of <strong>RM 103,100</strong> places you in the 21% tax bracket. The next bracket starts at RM 250,000.
-                        </p>
+                            Your chargeable income of <strong>RM {{ number_format($chargeableIncome, 2) }}</strong> places you in the current tax bracket. The next bracket starts at RM 250,000.
                     </div>
                 </div>
                 <!-- Helper / Promo -->
