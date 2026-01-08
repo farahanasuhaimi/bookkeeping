@@ -58,6 +58,19 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        // --- NEW: Initialize Default Data for New User ---
+        \App\Models\PaymentMethod::create([
+            'user_id' => $user->id,
+            'name' => 'Cash',
+            'type' => 'Cash'
+        ]);
+
+        \App\Models\PaymentMethod::create([
+            'user_id' => $user->id,
+            'name' => 'Bank Transfer',
+            'type' => 'Bank'
+        ]);
+
         auth()->login($user);
 
         return redirect()->route('dashboard');

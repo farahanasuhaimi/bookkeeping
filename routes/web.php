@@ -39,4 +39,12 @@ Route::middleware('auth')->group(function () {
     // Savings Route
     Route::get('/saving-tracking', [SavingsController::class, 'index'])->name('saving-tracking');
     Route::resource('savings-goals', SavingsController::class)->except(['index', 'show', 'create', 'edit']);
+    // Admin Routes
+    Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
+        Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('users');
+        Route::patch('/users/{id}/plan', [\App\Http\Controllers\AdminController::class, 'updatePlan'])->name('users.update-plan');
+        Route::get('/categories', [\App\Http\Controllers\AdminController::class, 'categories'])->name('categories');
+        Route::post('/categories', [\App\Http\Controllers\AdminController::class, 'storeCategory'])->name('categories.store');
+    });
 });

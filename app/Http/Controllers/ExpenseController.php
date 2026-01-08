@@ -49,7 +49,7 @@ class ExpenseController extends Controller
 
         try {
             $attachmentPath = null;
-            if ($request->hasFile('attachment')) {
+            if ($request->hasFile('attachment') && auth()->user()->plan == 'pro') {
                 $attachmentPath = $request->file('attachment')->store('attachments', 'public');
             }
 
@@ -101,7 +101,7 @@ class ExpenseController extends Controller
         ]);
 
         try {
-            if ($request->hasFile('attachment')) {
+            if ($request->hasFile('attachment') && auth()->user()->plan == 'pro') {
                 $validated['attachment_path'] = $request->file('attachment')->store('attachments', 'public');
             }
 

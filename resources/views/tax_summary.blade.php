@@ -22,12 +22,20 @@
                 </div>
             </div>
             <div class="flex gap-3">
+                @if(auth()->user()->plan == 'pro')
                 <a href="{{ route('tax-summary.export', ['year' => $currentYear]) }}" class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-white dark:bg-card-dark border border-border-light dark:border-border-dark text-text-main dark:text-white text-sm font-bold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm">
                     <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
                     <span class="truncate hidden sm:inline">Download PDF</span>
                 </a>
-                <button class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary hover:bg-primary-dark text-text-main text-sm font-bold transition-colors shadow-lg shadow-primary/20">
-                    <span class="material-symbols-outlined text-lg">table_view</span>
+                @else
+                <button onclick="showUpgradeModal()" class="flex items-center justify-center gap-2 rounded-lg h-10 px-4 bg-white/50 dark:bg-card-dark/50 border border-border-light dark:border-border-dark text-text-muted dark:text-gray-400 text-sm font-bold cursor-not-allowed group relative">
+                    <span class="material-symbols-outlined text-lg">lock</span>
+                    <span class="truncate hidden sm:inline">Download PDF</span>
+                    <div class="absolute -top-2 -right-2 bg-amber-400 text-[8px] px-1 rounded font-black text-black uppercase">PRO</div>
+                </button>
+                @endif
+                <button onclick="{{ auth()->user()->plan == 'pro' ? '' : 'showUpgradeModal()' }}" class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 {{ auth()->user()->plan == 'pro' ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-700' }} hover:bg-primary-dark text-text-main text-sm font-bold transition-colors shadow-lg shadow-primary/20">
+                    <span class="material-symbols-outlined text-lg">{{ auth()->user()->plan == 'pro' ? 'table_view' : 'lock' }}</span>
                     <span class="truncate">Export to Excel</span>
                 </button>
             </div>
@@ -125,23 +133,32 @@
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center px-2 py-1 hover:bg-white dark:hover:bg-card-dark rounded-lg transition-colors">
                                         <span class="text-sm text-text-muted dark:text-gray-400">Employment Income</span>
                                         <span class="text-sm font-medium text-text-main dark:text-white md:text-right">RM {{ number_format($employmentIncome, 2) }}</span>
-                                        <span class="text-sm font-bold text-primary md:text-right">RM {{ number_format($projEmployment, 2) }}</span>
+                                        <span class="text-sm font-bold text-primary md:text-right {{ auth()->user()->plan == 'pro' ? '' : 'blur-[4px] select-none' }}">RM {{ number_format($projEmployment, 2) }}</span>
                                     </div>
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center px-2 py-1 hover:bg-white dark:hover:bg-card-dark rounded-lg transition-colors">
                                         <span class="text-sm text-text-muted dark:text-gray-400">Rental Income (Net)</span>
                                         <span class="text-sm font-medium text-text-main dark:text-white md:text-right">RM {{ number_format($rentalIncome, 2) }}</span>
-                                        <span class="text-sm font-bold text-primary md:text-right">RM {{ number_format($projRental, 2) }}</span>
+                                        <span class="text-sm font-bold text-primary md:text-right {{ auth()->user()->plan == 'pro' ? '' : 'blur-[4px] select-none' }}">RM {{ number_format($projRental, 2) }}</span>
                                     </div>
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center px-2 py-1 hover:bg-white dark:hover:bg-card-dark rounded-lg transition-colors">
                                         <span class="text-sm text-text-muted dark:text-gray-400">Other (Freelance/Gig)</span>
                                         <span class="text-sm font-medium text-text-main dark:text-white md:text-right">RM {{ number_format($otherIncome, 2) }}</span>
-                                        <span class="text-sm font-bold text-primary md:text-right">RM {{ number_format($projOther, 2) }}</span>
+                                        <span class="text-sm font-bold text-primary md:text-right {{ auth()->user()->plan == 'pro' ? '' : 'blur-[4px] select-none' }}">RM {{ number_format($projOther, 2) }}</span>
                                     </div>
                                     
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center pt-3 border-t border-dashed border-gray-200 dark:border-gray-700 px-2 mt-2">
                                         <span class="text-sm text-text-main dark:text-white font-bold">Total Aggregated Income</span>
                                         <span class="text-sm font-bold text-text-main dark:text-white md:text-right">RM {{ number_format($totalIncome, 2) }}</span>
-                                        <span class="text-lg font-black text-primary md:text-right">RM {{ number_format($projectedIncome, 2) }}</span>
+                                        <div class="flex flex-col md:items-end">
+                                            @if(auth()->user()->plan == 'pro')
+                                                <span class="text-lg font-black text-primary md:text-right">RM {{ number_format($projectedIncome, 2) }}</span>
+                                            @else
+                                                <button onclick="showUpgradeModal()" class="flex items-center gap-1 text-[10px] font-black text-amber-500 hover:text-amber-400 transition-colors">
+                                                    <span class="material-symbols-outlined text-sm">lock</span> UNLOCK PRO FORECAST
+                                                </button>
+                                                <span class="text-lg font-black text-primary md:text-right blur-[6px] select-none">RM 88,888.88</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
 
@@ -350,8 +367,8 @@
                         </div>
                         <h4 class="font-bold text-lg">Maximize your refund?</h4>
                         <p class="text-sm text-gray-300">You have <strong>RM 6,850</strong> remaining in Medical relief quota. Upload receipts to claim more.</p>
-                        <button class="mt-2 w-full py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-sm font-semibold transition-colors">
-                            Upload Receipt
+                        <button onclick="{{ auth()->user()->plan == 'pro' ? '' : 'showUpgradeModal()' }}" class="mt-2 w-full py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-sm font-semibold transition-colors">
+                            {{ auth()->user()->plan == 'pro' ? 'Upload Receipt' : 'Unlock Receipt Upload' }}
                         </button>
                     </div>
                 </div>

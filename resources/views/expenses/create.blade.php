@@ -98,9 +98,28 @@
 
             <!-- Attachment -->
             <div>
-                <label for="attachment" class="block text-sm font-medium text-text-main dark:text-white mb-2">Receipt / Attachment (Optional)</label>
-                <input type="file" id="attachment" name="attachment" accept="image/*,.pdf" class="block w-full text-sm text-text-muted dark:text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
-                <p class="mt-1 text-xs text-text-muted dark:text-gray-500">Max 10MB. Images or PDF.</p>
+                <label for="attachment" class="block text-sm font-medium text-text-main dark:text-white mb-2 flex items-center gap-2">
+                    Receipt / Attachment (Optional)
+                    @if(auth()->user()->plan != 'pro')
+                        <span class="inline-flex items-center rounded-md bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400 ring-1 ring-inset ring-amber-600/20">PRO</span>
+                    @endif
+                </label>
+                
+                @if(auth()->user()->plan == 'pro')
+                    <input type="file" id="attachment" name="attachment" accept="image/*,.pdf" class="block w-full text-sm text-text-muted dark:text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                    <p class="mt-1 text-xs text-text-muted dark:text-gray-500">Max 10MB. Images or PDF.</p>
+                @else
+                    <div class="relative group cursor-pointer" onclick="showUpgradeModal()">
+                        <div class="absolute inset-0 bg-gray-100/50 dark:bg-card-dark/50 backdrop-blur-[2px] rounded-lg flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="text-xs font-black text-amber-500 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">lock</span> UNLOCK ATTACHMENTS
+                            </span>
+                        </div>
+                        <input type="file" disabled class="block w-full text-xs text-text-muted dark:text-gray-400 border border-dashed border-border-light dark:border-border-dark rounded-lg p-4 cursor-not-allowed" placeholder="Upgrade to Pro to upload receipts">
+                    </div>
+                    <p class="mt-1 text-[10px] text-amber-600 dark:text-amber-400 font-bold">File attachments are available for Pro users only.</p>
+                @endif
+
                 @if(isset($expense) && $expense->attachment_path)
                      <p class="mt-2 text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
                         <span class="material-symbols-outlined text-[14px]">attachment</span>
