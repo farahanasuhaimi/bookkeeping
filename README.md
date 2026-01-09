@@ -58,7 +58,7 @@ We recently completed a major structural cleanup to improve maintainability:
 
 ## 🗺 2026 Roadmap (Next Steps)
 
-- [ ] **CHIP.io Integration**: Implement automated subscription payments for Pro accounts (In Progress).
+- [ ] **[CHIP-asia.com](https://www.chip-in.asia/) Integration**: Implement automated subscription payments for Pro accounts (In Progress).
 - [ ] **Savings Tracker**: Implement the projected savings module to help users meet long-term financial goals.
 - [ ] **AI Receipt Parsing**: (Experimental) Automated data extraction from uploaded receipt images.
 - [ ] **PDF Reporting**: Generate one-click tax reports for easy LHDN e-Filing reference.
