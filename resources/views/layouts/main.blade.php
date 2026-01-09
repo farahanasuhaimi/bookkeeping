@@ -46,8 +46,8 @@
                     <span class="material-symbols-outlined {{ request()->routeIs('import.*') ? 'text-primary' : '' }}">upload_file</span>
                     <span class="text-sm font-medium">Import Statement</span>
                 </a>
-                <a class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-muted hover:bg-background-light hover:text-text-main dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white transition-colors" href="#">
-                    <span class="material-symbols-outlined">settings</span>
+                <a class="group flex items-center gap-3 rounded-lg {{ request()->routeIs('settings.*') ? 'bg-background-light dark:bg-white/5 text-text-main dark:text-white' : 'text-text-muted hover:bg-background-light hover:text-text-main dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white' }} px-3 py-2.5 transition-colors" href="{{ route('settings.index') }}">
+                    <span class="material-symbols-outlined {{ request()->routeIs('settings.*') ? 'text-primary' : '' }}">settings</span>
                     <span class="text-sm font-medium">Settings</span>
                 </a>
 

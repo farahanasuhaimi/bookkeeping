@@ -48,6 +48,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/import/preview', [\App\Http\Controllers\ImportController::class, 'preview'])->name('import.preview');
     Route::post('/import/store', [\App\Http\Controllers\ImportController::class, 'store'])->name('import.store');
 
+    // Settings Routes
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\SettingsController::class, 'index'])->name('index');
+        Route::get('/profile', [\App\Http\Controllers\SettingsController::class, 'profile'])->name('profile');
+        Route::patch('/profile', [\App\Http\Controllers\SettingsController::class, 'updateProfile'])->name('profile.update');
+        Route::patch('/password', [\App\Http\Controllers\SettingsController::class, 'updatePassword'])->name('password.update');
+        Route::get('/payment-methods', [\App\Http\Controllers\SettingsController::class, 'paymentMethods'])->name('payment-methods');
+        Route::post('/payment-methods', [\App\Http\Controllers\SettingsController::class, 'storePaymentMethod'])->name('payment-methods.store');
+        Route::delete('/payment-methods/{id}', [\App\Http\Controllers\SettingsController::class, 'destroyPaymentMethod'])->name('payment-methods.destroy');
+        Route::get('/categories', [\App\Http\Controllers\SettingsController::class, 'categories'])->name('categories');
+        Route::post('/categories', [\App\Http\Controllers\SettingsController::class, 'storeCategory'])->name('categories.store');
+        Route::delete('/categories/{id}', [\App\Http\Controllers\SettingsController::class, 'destroyCategory'])->name('categories.destroy');
+    });
+
     // Admin Routes
     Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
