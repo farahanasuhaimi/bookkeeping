@@ -42,6 +42,12 @@ Route::middleware('auth')->group(function () {
     // Savings Route
     Route::get('/saving-tracking', [SavingsController::class, 'index'])->name('saving-tracking');
     Route::resource('savings-goals', SavingsController::class)->except(['index', 'show', 'create', 'edit']);
+
+    // Import Routes
+    Route::get('/import', [\App\Http\Controllers\ImportController::class, 'index'])->name('import.index');
+    Route::post('/import/preview', [\App\Http\Controllers\ImportController::class, 'preview'])->name('import.preview');
+    Route::post('/import/store', [\App\Http\Controllers\ImportController::class, 'store'])->name('import.store');
+
     // Admin Routes
     Route::middleware(['admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');

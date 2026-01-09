@@ -1,32 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Tailwind Config for this page's custom colors -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
-    tailwind.config = {
-        darkMode: "class",
-        theme: {
-            extend: {
-                colors: {
-                    "primary": "#13ec80",
-                    "background-light": "#f6f8f7",
-                    "background-dark": "#102219",
-                    "surface-light": "#ffffff",
-                    "surface-dark": "#1A2C23",
-                    "text-main": "#111814",
-                    "text-muted": "#618975",
-                    "border-light": "#dbe6e0",
-                    "border-dark": "#2A4034",
-                },
-                fontFamily: {
-                    "display": ["Inter", "sans-serif"]
-                },
-            },
-        },
-    }
-</script>
-
 <div class="flex h-screen w-full overflow-hidden">
     <!-- Side Navigation -->
     <aside class="hidden w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark lg:flex">
@@ -67,6 +41,10 @@
                 <a href="{{ route('saving-tracking') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg {{ request()->routeIs('saving-tracking') ? 'bg-primary/10 text-primary' : 'text-text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors">
                     <span class="material-symbols-outlined text-[22px]">savings</span>
                     <span class="text-sm font-semibold">Savings Tracker</span>
+                </a>
+                <a class="group flex items-center gap-3 rounded-lg {{ request()->routeIs('import.*') ? 'bg-background-light dark:bg-white/5 text-text-main dark:text-white' : 'text-text-muted hover:bg-background-light hover:text-text-main dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white' }} px-3 py-2.5 transition-colors" href="{{ route('import.index') }}">
+                    <span class="material-symbols-outlined {{ request()->routeIs('import.*') ? 'text-primary' : '' }}">upload_file</span>
+                    <span class="text-sm font-medium">Import Statement</span>
                 </a>
                 <a class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-text-muted hover:bg-background-light hover:text-text-main dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white transition-colors" href="#">
                     <span class="material-symbols-outlined">settings</span>
