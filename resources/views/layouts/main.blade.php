@@ -86,10 +86,10 @@
         @if(auth()->user()->plan == 'free')
         <div class="p-4 px-6">
             <div class="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 p-4">
-                <p class="text-xs font-bold text-amber-800 dark:text-amber-400 mb-2">Unlock Pro Features</p>
-                <button onclick="showUpgradeModal()" class="w-full bg-amber-400 hover:bg-amber-500 text-text-main text-[11px] font-black py-2 rounded-lg transition-colors">
+                <p class="text-xs font-bold text-amber-800 dark:text-amber-400 mb-2 italic">Unlock Pro Features</p>
+                <a href="{{ route('pricing') }}" class="block w-full text-center bg-amber-400 hover:bg-amber-500 text-text-main text-[11px] font-black py-2 rounded-lg transition-colors italic">
                     UPGRADE NOW
-                </button>
+                </a>
             </div>
         </div>
         @endif
@@ -161,10 +161,10 @@
                     Historical Year Comparisons
                 </li>
             </ul>
-            <button class="w-full bg-primary hover:bg-primary-dark text-text-main font-black py-4 rounded-xl transition-transform hover:scale-[1.02] shadow-xl shadow-primary/20">
-                START 7-DAY FREE TRIAL
-            </button>
-            <p class="mt-4 text-[10px] text-text-muted uppercase font-bold tracking-widest">Only RM 9.90 / month</p>
+            <a href="{{ route('pricing') }}" class="block w-full text-center bg-primary hover:bg-primary-dark text-text-main font-black py-4 rounded-xl transition-transform hover:scale-[1.02] shadow-xl shadow-primary/20 italic">
+                EXPLORE PLANS
+            </a>
+            <p class="mt-4 text-[10px] text-text-muted uppercase font-bold tracking-widest italic">Starting from RM 15.00 / month</p>
         </div>
     </div>
 </div>

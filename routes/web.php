@@ -25,6 +25,9 @@ Route::post('/reset-password', [AuthController::class, 'updatePassword'])->middl
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/pricing', function () {
+        return view('pricing');
+    })->name('pricing');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
     // Income Resource Routes
