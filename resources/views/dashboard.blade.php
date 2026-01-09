@@ -69,119 +69,105 @@
         </div>
     </div>
 
-    <!-- Charts & Breakdown Section -->
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
-        <!-- Main Chart -->
-        <div class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-6 shadow-sm lg:col-span-2">
-            <div class="mb-6 flex items-center justify-between">
-                <div>
-                    <h3 class="text-base font-bold text-text-main dark:text-white">Income vs Expenses</h3>
-                    <p class="text-sm text-text-muted dark:text-gray-400">Daily trend for {{ $startOfMonth->format('F') }}</p>
-                </div>
-                <div class="flex items-center gap-2 text-sm">
-                    <span class="flex items-center gap-1.5">
-                        <span class="h-2.5 w-2.5 rounded-full bg-primary"></span>
-                        <span class="text-text-muted dark:text-gray-400">Income</span>
-                    </span>
-                    <span class="flex items-center gap-1.5">
-                        <span class="h-2.5 w-2.5 rounded-full bg-border-light dark:bg-gray-600"></span>
-                        <span class="text-text-muted dark:text-gray-400">Expenses</span>
-                    </span>
-                </div>
-            </div>
-            
-            <!-- Dynamic SVG Chart -->
-            <div class="relative h-[250px] w-full flex items-end gap-1">
-                @php
-                    $maxVal = max(collect($chartData)->max('income'), collect($chartData)->max('expense'), 100); // Avoid div/0
-                @endphp
-                @foreach($chartData as $data)
-                    <div class="flex-1 flex flex-col justify-end items-center group relative h-full">
-                        <div class="w-full flex gap-0.5 items-end justify-center h-full pb-6">
-                            <!-- Income Bar -->
-                            <div style="height: {{ ($data['income'] / $maxVal) * 80 }}%" class="w-1.5 bg-primary/80 rounded-t-sm hover:bg-primary transition-all relative"></div>
-                            <!-- Expense Bar -->
-                            <div style="height: {{ ($data['expense'] / $maxVal) * 80 }}%" class="w-1.5 bg-gray-300 dark:bg-gray-600 rounded-t-sm hover:bg-gray-400 transition-all relative"></div>
-                        </div>
-                        <!-- Tooltip -->
-                        <div class="absolute bottom-10 opacity-0 group-hover:opacity-100 bg-black text-white text-[10px] p-2 rounded pointer-events-none z-10 w-24 text-center transition-opacity">
-                            <p class="font-bold">{{ $data['date'] }}</p>
-                            <p class="text-primary">Inc: {{ $data['income'] }}</p>
-                            <p class="text-gray-400">Exp: {{ $data['expense'] }}</p>
-                        </div>
-                        <!-- X-Axis Label (Show every 5th day) -->
-                        @if($loop->iteration % 5 == 1 || $loop->last)
-                            <span class="absolute bottom-0 text-[10px] text-text-muted dark:text-gray-500 whitespace-nowrap">{{ $data['date'] }}</span>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
+    <!-- Analytics Hub Section -->
+    <div class="mb-8 overflow-hidden rounded-[2rem] border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
+        <div class="border-b border-border-light dark:border-border-dark p-6 sm:px-8">
+            <h3 class="text-xl font-black text-text-main dark:text-white italic flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary font-bold">analytics</span>
+                Analytics Hub
+            </h3>
         </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-border-light dark:divide-border-dark">
+            <!-- Yearly Trending Chart -->
+            <div class="p-6 sm:p-8 lg:col-span-2">
+                <div class="mb-6 flex items-center justify-between">
+                    <div>
+                        <h4 class="text-sm font-black uppercase tracking-widest text-text-muted italic">Monthly Performance</h4>
+                        <p class="text-xs text-text-muted">Income vs Expenses (Last 12 Months)</p>
+                    </div>
+                </div>
+                <div class="h-[300px] w-full lowercase">
+                    <canvas id="yearlyTrendChart"></canvas>
+                </div>
+            </div>
 
-        <!-- Expense Categories -->
-        <div class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-6 shadow-sm flex flex-col">
-            <h3 class="text-lg font-bold text-text-main dark:text-white mb-4">Top Spending</h3>
-            <div class="flex flex-col gap-4 flex-1">
-                @forelse($expensesByCategory as $catName => $data)
-                <div class="flex items-center gap-4 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-white/5 p-3">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">
-                        <span class="material-symbols-outlined text-[20px]">
-                             {{ match(strtolower($catName)) {
-                                'housing' => 'home',
-                                'transport' => 'directions_car',
-                                'utilities' => 'bolt',
-                                'food & dining' => 'restaurant',
-                                'entertainment' => 'confirmation_number',
-                                default => 'category'
-                            } }}
-                        </span>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex justify-between">
-                            <p class="text-sm font-bold text-text-main dark:text-white">{{ $catName }}</p>
-                            <p class="text-xs text-text-muted dark:text-gray-400">{{ $data['percentage'] }}%</p>
-                        </div>
-                        <p class="text-xs text-text-muted dark:text-gray-400">RM {{ number_format($data['amount']) }}</p>
-                         <div class="h-1.5 w-full bg-white dark:bg-black/20 rounded-full mt-1.5 overflow-hidden">
-                            <div class="h-full bg-blue-500 rounded-full" style="width: {{ $data['percentage'] }}%"></div>
-                        </div>
+            <!-- Distribution Charts (Carousel-like or Stacked) -->
+            <div class="p-6 sm:p-8 flex flex-col gap-8">
+                <div>
+                    <h4 class="text-sm font-black uppercase tracking-widest text-text-muted italic mb-4">Expense Distribution</h4>
+                    <div class="h-[180px] w-full">
+                        <canvas id="expenseDistChart"></canvas>
                     </div>
                 </div>
-                @empty
-                <div class="flex-1 flex flex-col items-center justify-center text-text-muted py-8">
-                    <span class="material-symbols-outlined text-4xl mb-2 opacity-50">pie_chart</span>
-                    <p>No expenses yet</p>
+                <div>
+                    <h4 class="text-sm font-black uppercase tracking-widest text-text-muted italic mb-4">Income Breakdown</h4>
+                    <div class="h-[180px] w-full">
+                        <canvas id="incomeDistChart"></canvas>
+                    </div>
                 </div>
-                @endforelse
             </div>
         </div>
-        <!-- Savings Goals -->
-        <div class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-6 shadow-sm flex flex-col">
-            <div class="mb-4 flex items-center justify-between">
-                <h3 class="text-lg font-bold text-text-main dark:text-white">Savings Goals</h3>
-                <a href="{{ route('saving-tracking') }}" class="text-xs font-bold text-primary hover:underline">View All</a>
+    </div>
+
+    <!-- Stats & Goals Row -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-8">
+        <!-- Saving Goals -->
+        <div class="rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-8 shadow-sm">
+            <div class="mb-6 flex items-center justify-between">
+                <h3 class="text-lg font-black text-text-main dark:text-white italic">Active Savings Goals</h3>
+                <a href="{{ route('saving-tracking') }}" class="bg-primary/10 text-primary px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/20 transition-all">MANAGE</a>
             </div>
-            <div class="flex flex-col gap-4 flex-1">
+            <div class="space-y-6">
                 @forelse($activeGoals as $goal)
                     @php
                         $perc = $goal->target_amount > 0 ? min(($goal->current_amount / $goal->target_amount) * 100, 100) : 0;
                     @endphp
-                    <div class="flex flex-col gap-2">
-                        <div class="flex justify-between items-end">
+                    <div>
+                        <div class="flex justify-between items-end mb-2">
                             <span class="text-sm font-bold text-text-main dark:text-white">{{ $goal->name }}</span>
-                            <span class="text-[10px] text-text-muted dark:text-gray-400">RM {{ number_format($goal->current_amount) }} / {{ number_format($goal->target_amount) }}</span>
+                            <span class="text-[10px] font-black text-text-muted italic">RM {{ number_format($goal->current_amount) }} / {{ number_format($goal->target_amount) }}</span>
                         </div>
-                        <div class="h-1.5 w-full bg-background-light dark:bg-white/5 rounded-full overflow-hidden">
-                            <div class="h-full bg-primary rounded-full transition-all duration-500" style="width: {{ $perc }}%"></div>
+                        <div class="h-2 w-full bg-background-light dark:bg-background-dark rounded-full overflow-hidden p-0.5 border border-border-light dark:border-border-dark shadow-inner">
+                            <div class="h-full bg-primary rounded-full transition-all duration-1000" style="width: {{ $perc }}%"></div>
                         </div>
                     </div>
                 @empty
-                    <div class="flex-1 flex flex-col items-center justify-center text-text-muted py-8">
-                        <span class="material-symbols-outlined text-4xl mb-2 opacity-50">savings</span>
-                        <p class="text-xs">No active goals</p>
+                    <div class="flex flex-col items-center justify-center text-text-muted py-8 opacity-50">
+                        <span class="material-symbols-outlined text-4xl mb-2">savings</span>
+                        <p class="text-xs font-black uppercase italic tracking-widest">No active goals</p>
                     </div>
                 @endforelse
             </div>
+        </div>
+
+        <!-- Top Categories List -->
+        <div class="rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-8 shadow-sm">
+             <h3 class="text-lg font-black text-text-main dark:text-white mb-6 italic">Top Spending Categories</h3>
+             <div class="grid grid-cols-1 gap-4">
+                @forelse($expensesByCategory->take(3) as $catName => $data)
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark group hover:border-primary/50 transition-all">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl font-black italic text-lg shadow-sm" style="background-color: {{ $data['color'] }}20; color: {{ $data['color'] }}">
+                         {{ substr($catName, 0, 1) }}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-baseline mb-1">
+                            <p class="text-sm font-bold text-text-main dark:text-white">{{ $catName }}</p>
+                            <p class="text-[10px] font-black text-primary italic uppercase">{{ $data['percentage'] }}%</p>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs text-text-muted italic">RM {{ number_format($data['amount'], 2) }}</p>
+                            <p class="text-[9px] text-text-muted font-black uppercase tracking-widest">{{ $data['count'] ?? 0 }} entries</p>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="flex flex-col items-center justify-center text-text-muted py-8 opacity-50">
+                    <span class="material-symbols-outlined text-4xl mb-2">category</span>
+                    <p class="text-xs font-black uppercase italic tracking-widest">No spending recorded</p>
+                </div>
+                @endforelse
+             </div>
         </div>
     </div>
 
@@ -248,4 +234,191 @@
         </div>
     </div>
 </div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.03)';
+        const textColor = isDark ? '#9ca3af' : '#94a3b8';
+        
+        // Vibrant Palette for Categories
+        const colorPalette = [
+            '#3b82f6', // Blue
+            '#ef4444', // Red
+            '#f59e0b', // Amber
+            '#10b981', // Emerald
+            '#8b5cf6', // Violet
+            '#ec4899', // Pink
+            '#06b6d4', // Cyan
+            '#f97316', // Orange
+        ];
+
+        // 1. Yearly Trend Chart
+        const trendCtx = document.getElementById('yearlyTrendChart').getContext('2d');
+        new Chart(trendCtx, {
+            type: 'line',
+            data: {
+                labels: @json(collect($yearlyTrending)->pluck('month')),
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: @json(collect($yearlyTrending)->pluck('income')),
+                        borderColor: '#13ec80',
+                        backgroundColor: 'rgba(19, 236, 128, 0.05)', // Very subtle fill
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 0, // Clean look, show on hover
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: '#13ec80',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: 'Expense',
+                        data: @json(collect($yearlyTrending)->pluck('expense')),
+                        borderColor: isDark ? '#64748b' : '#cbd5e1',
+                        backgroundColor: 'transparent',
+                        fill: false,
+                        tension: 0.4,
+                        borderWidth: 2,
+                        borderDash: [6, 6],
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: isDark ? '#64748b' : '#94a3b8'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: isDark ? '#1e293b' : '#ffffff',
+                        titleColor: isDark ? '#ffffff' : '#0f172a',
+                        bodyColor: isDark ? '#cbd5e1' : '#334155',
+                        borderColor: isDark ? '#334155' : '#e2e8f0',
+                        borderWidth: 1,
+                        padding: 10,
+                        displayColors: true,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += 'RM ' + new Intl.NumberFormat('en-MY', { minimumFractionDigits: 2 }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { 
+                            color: gridColor,
+                            drawBorder: false,
+                        },
+                        border: { display: false },
+                        ticks: { 
+                            color: textColor, 
+                            font: { size: 10, weight: '500' }, 
+                            maxTicksLimit: 5,
+                            padding: 10,
+                            callback: value => 'RM ' + value 
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        border: { display: false },
+                        ticks: { 
+                            color: textColor, 
+                            font: { size: 10, weight: '500' },
+                            maxRotation: 0
+                        }
+                    }
+                }
+            }
+        });
+
+        // 2. Expense Distribution Chart
+        const expenseCtx = document.getElementById('expenseDistChart').getContext('2d');
+        new Chart(expenseCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @json($expensesByCategory->keys()),
+                datasets: [{
+                    data: @json($expensesByCategory->pluck('amount')),
+                    backgroundColor: colorPalette,
+                    borderWidth: 2,
+                    borderColor: isDark ? '#111827' : '#ffffff', // Match bg for gap effect
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: textColor,
+                            font: { size: 11, weight: '500' },
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 20,
+                            boxWidth: 8
+                        }
+                    }
+                }
+            }
+        });
+
+        // 3. Income Breakdown Chart
+        const incomeCtx = document.getElementById('incomeDistChart').getContext('2d');
+        new Chart(incomeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @json($incomeByCategory->keys()),
+                datasets: [{
+                    data: @json($incomeByCategory->pluck('amount')),
+                    backgroundColor: colorPalette, // Reusing palette
+                    borderWidth: 2,
+                    borderColor: isDark ? '#111827' : '#ffffff',
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        position: 'left',
+                        labels: {
+                            color: textColor,
+                            font: { size: 11, weight: '500' },
+                            usePointStyle: true,
+                            pointStyle: 'circle',
+                            padding: 20,
+                            boxWidth: 8
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 @endsection

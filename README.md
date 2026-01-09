@@ -6,60 +6,68 @@
 
 ## 🌟 Key Features
 
-### 1. **Financial Dashboard**
-- **Monthly Overview**: Real-time snapshot of Total Income, Total Expenses, and Net Balance.
-- **Visual Analytics**: Interactive charts showing daily trends and spending breakdowns.
-- **Recent Activity**: Quick view of recent transactions with direct edit access.
+### 1. **Advanced Analytics Hub**
+- **Yearly Trending**: Interactive line charts visualizing Income vs. Expenses over the last 12 months.
+- **Category Breakdown**: Beautiful doughnut charts showing precise spending and income distribution by category.
+- **Visual Clarity**: Vibrant, distinct color palettes for easy data interpretation.
 
-### 2. **Income Management**
-- Dedicated CRUD flow for tracking multiple income sources.
-- Support for various payment methods and descriptive notes.
-- Quick-add interface for fast data entry.
+### 2. **Smart Savings & Goal Tracking**
+- **Personal Goals**: Create and track custom savings goals (e.g., "Emergency Fund", "New Laptop") with visual progress bars.
+- **Tax Relief Tracking**: Dedicated tracking for tax-deductible savings like EPF, PRS, and SSPN to maximize tax benefits.
+- **Real-time Insights**: "At a Glance" stats for Total Savings, YTD EPF, and Zakat contributions.
 
-### 3. **Expense & Tax Tracking**
-- **Tax Deductibility**: Flag expenses as tax-deductible for accurate tax planning.
-- **Attachment Support**: Upload and store receipts/invoices directly with each record.
-- **Categorization**: Specialized expense categories tailored for Malaysian tax reliefs.
+### 3. **Seamless Transaction Management**
+- **Universal Quick-Add**: A global "New Transaction" modal accessible from anywhere.
+- **Smart Mobile UX**: Floating Action Button (FAB) for one-tap entry on mobile devices.
+- **Dynamic Context**: Intelligent form that adapts categories based on "Income" or "Expense" selection.
 
-### 4. **Tax Summary (YA 2026 Ready)**
+### 4. **Mobile-First Experience**
+- **Responsive Navigation**: Smooth off-canvas sidebar menu for mobile users.
+- **Touch-Optimized**: Large touch targets, simplified layouts, and FAB integration for on-the-go management.
+- **Adaptive Charts**: Analytics charts that resize and reformat perfectly for small screens.
+
+### 5. **Comprehensive Settings**
+- **Profile Management**: Update personal details and secure password management.
+- **Payment Methods**: Custom CRUD management for banks, e-wallets, and cards.
+- **Category Customization**: Full control over income and expense categories to match your specific needs.
+
+### 6. **Tax Summary (YA 2026 Ready)**
 - **Chargeable Income Calculation**: Detailed breakdown of statutory income and reliefs.
 - **Relief Optimization**: Real-time tracking of individual, lifestyle, and medical relief quotas.
 - **Tax Payable Estimation**: Estimates your net tax payable based on current Malaysian tax brackets.
 
-### 5. **Bank Statement Import**
-- **Smart Mapping**: Intelligent interface to map CSV columns (Date, Description, Amount) from any bank.
+### 7. **Bank Statement Import**
+- **Smart Mapping**: Intelligent interface to map CSV columns from any bank.
 - **Fuzzy Date Parsing**: Robust handling of various Malaysian date formats (e.g., 09 Jan 2026, 09/01/2026).
-- **Credit/Debit Support**: Handles separate deposit/withdrawal columns or single-column amount signs.
-- **Accounting Format Support**: Correctly interprets negative amounts in parentheses.
+- **Pro-Level Handling**: Correctly interprets credit/debit columns and negative accounting formats.
 
 ---
 
 ## 🛠 Technical Architecture
 
-- **Backend**: Laravel (PHP 8.2+)
+- **Backend**: Laravel 11.x (PHP 8.2+)
 - **Frontend**: Blade with Tailwind CSS
-- **Interactions**: Vanilla JavaScript (Modern, lightweight, no jQuery)
-- **Database**: Eloquent ORM with resource-based controllers
-- **Icons/Fonts**: Google Material Symbols & Inter Font
+- **Charts**: Chart.js for dynamic visualization
+- **Interactions**: Vanilla JavaScript (Modern, lightweight)
+- **Database**: Eloquent ORM
+- **Icons**: Google Material Symbols
 
 ---
 
-## 🔄 Recent Reorganization (Jan 2026)
+## 🔄 Recent Updates (Jan 2026)
 
-We recently completed a major structural cleanup to improve maintainability:
-- **Decoupled Logic**: Migrated from a monolithic `TransactionController` to dedicated `IncomeController` and `ExpenseController`.
-- **Resource Routing**: Standardized all financial modules to use Laravel RESTful resources.
-- **Dedicated Pages**: Replaced the global transaction modal with high-performance, dedicated Create/Edit pages for better user focus and data validation.
-- **Layout Refactoring**: Consolidated dashboard layouts into a unified `layouts.main` system.
-- **Premium Theme Alignment**: Harmonized registration and login pages with the dashboard's high-end dark/light design system.
-- **Centralized Design System**: Moved Tailwind configurations to a base app layout for project-wide consistency.
+- **UI/UX Overhaul**: Implemented a globally accessible Transaction Modal and Mobile FAB.
+- **Mobile Optimization**: fixed mobile navigation with a responsive hamburger menu and sidebar.
+- **Analytics Engine**: Deployed Chart.js powered visual analytics for yearly trends.
+- **Savings Module**: Launched the dedicated Savings & Goal Tracking feature.
+- **Settings System**: Built a robust settings module for managing dynamic app data.
 
 ---
 
 ## 🗺 2026 Roadmap (Next Steps)
 
 - [ ] **[CHIP-asia.com](https://www.chip-in.asia/) Integration**: Implement automated subscription payments for Pro accounts (In Progress).
-- [ ] **Savings Tracker**: Implement the projected savings module to help users meet long-term financial goals.
+- [x] **Savings Tracker**: Implement the projected savings module to help users meet long-term financial goals.
 - [ ] **AI Receipt Parsing**: (Experimental) Automated data extraction from uploaded receipt images.
 - [ ] **PDF Reporting**: Generate one-click tax reports for easy LHDN e-Filing reference.
 - [ ] **Multi-Currency Support**: Support for freelancers working with international clients.

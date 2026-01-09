@@ -71,6 +71,28 @@ class DashboardController extends Controller
             ];
         }
 
+        // 3b. Yearly Trending (Last 12 Months)
+        $yearlyTrending = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $monthDate = Carbon::now()->subMonths($i);
+            $monthIncome = Income::where('user_id', $user->id)
+                ->whereYear('date', $monthDate->year)
+                ->whereMonth('date', $monthDate->month)
+                ->where('status', 'confirmed')
+                ->sum('amount');
+            $monthExpense = Expense::where('user_id', $user->id)
+                ->whereYear('date', $monthDate->year)
+                ->whereMonth('date', $monthDate->month)
+                ->where('status', 'completed')
+                ->sum('amount');
+            
+            $yearlyTrending[] = [
+                'month' => $monthDate->format('M Y'),
+                'income' => $monthIncome,
+                'expense' => $monthExpense
+            ];
+        }
+
         // 4. Expense Categories Breakdown
         $expensesByCategory = Expense::where('user_id', $user->id)
             ->whereYear('date', $startOfMonth->year)
@@ -78,15 +100,34 @@ class DashboardController extends Controller
             ->where('status', 'completed')
             ->with('category')
             ->get()
-            ->groupBy('category.name')
+            ->groupBy(fn($item) => $item->category->name ?? 'Uncategorized')
             ->map(function ($group) use ($totalExpenses) {
                 $sum = $group->sum('amount');
                 return [
                     'amount' => $sum,
                     'percentage' => $totalExpenses > 0 ? round(($sum / $totalExpenses) * 100) : 0,
-                    'count' => $group->count()
+                    'count' => $group->count(),
+                    'color' => $group->first()->category->color ?? '#64748b' // Default gray for uncategorized
                 ];
-            })->sortByDesc('amount')->take(4);
+            })->sortByDesc('amount');
+
+        // 4b. Income Categories Breakdown
+        $incomeByCategory = Income::where('user_id', $user->id)
+            ->whereYear('date', $startOfMonth->year)
+            ->whereMonth('date', $startOfMonth->month)
+            ->where('status', 'confirmed')
+            ->with('category')
+            ->get()
+            ->groupBy(fn($item) => $item->category->name ?? 'Uncategorized')
+            ->map(function ($group) use ($totalIncome) {
+                $sum = $group->sum('amount');
+                return [
+                    'amount' => $sum,
+                    'percentage' => $totalIncome > 0 ? round(($sum / $totalIncome) * 100) : 0,
+                    'count' => $group->count(),
+                    'color' => $group->first()->category->color ?? '#64748b'
+                ];
+            })->sortByDesc('amount');
 
         // 5. Recent/All Transactions
         $incomes = Income::where('user_id', $user->id)
@@ -137,7 +178,9 @@ class DashboardController extends Controller
             'totalExpenses', 
             'netBalance', 
             'chartData', 
+            'yearlyTrending',
             'expensesByCategory', 
+            'incomeByCategory',
             'transactions',
             'estTaxSavings',
             'paymentMethods',
