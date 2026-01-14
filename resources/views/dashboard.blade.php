@@ -26,7 +26,10 @@
         <!-- Income Card -->
         <div class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5 shadow-sm transition-all hover:shadow-md">
             <div class="mb-2 flex items-center justify-between">
-                <p class="text-sm font-medium text-text-muted dark:text-gray-400">Total Income</p>
+                <div class="flex items-center gap-2">
+                    <p class="text-sm font-medium text-text-muted dark:text-gray-400">Total Income</p>
+                    <x-tooltip text="Sum of all income transactions for the selected month. Includes all income categories like salary, freelance work, and other earnings." />
+                </div>
                 <span class="material-symbols-outlined text-primary bg-primary/10 rounded-full p-1 text-[20px]">trending_up</span>
             </div>
             <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($totalIncome, 2) }}</p>
@@ -37,7 +40,10 @@
         <!-- Expenses Card -->
         <div class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5 shadow-sm transition-all hover:shadow-md">
             <div class="mb-2 flex items-center justify-between">
-                <p class="text-sm font-medium text-text-muted dark:text-gray-400">Total Expenses</p>
+                <div class="flex items-center gap-2">
+                    <p class="text-sm font-medium text-text-muted dark:text-gray-400">Total Expenses</p>
+                    <x-tooltip text="Total amount spent this month across all expense categories. Track your spending patterns to optimize your budget." />
+                </div>
                 <span class="material-symbols-outlined text-red-500 bg-red-500/10 rounded-full p-1 text-[20px]">trending_down</span>
             </div>
             <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($totalExpenses, 2) }}</p>
@@ -48,7 +54,10 @@
         <!-- Balance Card -->
         <div class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5 shadow-sm transition-all hover:shadow-md">
             <div class="mb-2 flex items-center justify-between">
-                <p class="text-sm font-medium text-text-muted dark:text-gray-400">Net Balance</p>
+                <div class="flex items-center gap-2">
+                    <p class="text-sm font-medium text-text-muted dark:text-gray-400">Net Balance</p>
+                    <x-tooltip text="Your net cash flow for the month (Income minus Expenses). A positive balance means you saved money this month!" />
+                </div>
                 <span class="material-symbols-outlined text-text-main dark:text-white bg-gray-100 dark:bg-white/10 rounded-full p-1 text-[20px]">account_balance_wallet</span>
             </div>
             <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white {{ $netBalance < 0 ? 'text-red-500' : '' }}">RM {{ number_format($netBalance, 2) }}</p>
@@ -59,7 +68,10 @@
         <!-- Est Tax Card (Placeholder logic) -->
         <div class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-5 shadow-sm transition-all hover:shadow-md ring-1 ring-primary/20">
             <div class="mb-2 flex items-center justify-between">
-                <p class="text-sm font-medium text-text-muted dark:text-gray-400">Est. Tax Impact</p>
+                <div class="flex items-center gap-2">
+                    <p class="text-sm font-medium text-text-muted dark:text-gray-400">Est. Tax Impact</p>
+                    <x-tooltip text="Estimated tax reduction from your deductible expenses this month. This helps you understand potential tax savings for LHDN filing." />
+                </div>
                 <span class="material-symbols-outlined text-primary bg-primary/10 rounded-full p-1 text-[20px]">savings</span>
             </div>
             <p class="text-2xl font-bold tracking-tight text-text-main dark:text-white">RM {{ number_format($estTaxSavings, 2) }}</p>
@@ -72,10 +84,13 @@
     <!-- Analytics Hub Section -->
     <div class="mb-8 overflow-hidden rounded-[2rem] border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
         <div class="border-b border-border-light dark:border-border-dark p-6 sm:px-8">
-            <h3 class="text-xl font-black text-text-main dark:text-white italic flex items-center gap-3">
-                <span class="material-symbols-outlined text-primary font-bold">analytics</span>
-                Analytics Hub
-            </h3>
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-black text-text-main dark:text-white italic flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary font-bold">analytics</span>
+                    Analytics Hub
+                </h3>
+                <x-tooltip text="Visual insights into your financial trends and spending patterns over the past 12 months. Use these charts to identify opportunities for savings." />
+            </div>
         </div>
         
         <div class="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-border-light dark:divide-border-dark">
@@ -115,7 +130,10 @@
         <!-- Saving Goals -->
         <div class="rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-8 shadow-sm">
             <div class="mb-6 flex items-center justify-between">
-                <h3 class="text-lg font-black text-text-main dark:text-white italic">Active Savings Goals</h3>
+                <div class="flex items-center gap-2">
+                    <h3 class="text-lg font-black text-text-main dark:text-white italic">Active Savings Goals</h3>
+                    <x-tooltip text="Track progress toward your personal savings goals and tax relief targets like EPF, PRS, and SSPN contributions." />
+                </div>
                 <a href="{{ route('saving-tracking') }}" class="bg-primary/10 text-primary px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/20 transition-all">MANAGE</a>
             </div>
             <div class="space-y-6">
@@ -143,7 +161,10 @@
 
         <!-- Top Categories List -->
         <div class="rounded-3xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-8 shadow-sm">
-             <h3 class="text-lg font-black text-text-main dark:text-white mb-6 italic">Top Spending Categories</h3>
+             <div class="flex items-center gap-2 mb-6">
+                 <h3 class="text-lg font-black text-text-main dark:text-white italic">Top Spending Categories</h3>
+                 <x-tooltip text="Your top 3 expense categories for this month. Review these to identify where most of your money is going." />
+             </div>
              <div class="grid grid-cols-1 gap-4">
                 @forelse($expensesByCategory->take(3) as $catName => $data)
                 <div class="flex items-center gap-4 p-4 rounded-2xl bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark group hover:border-primary/50 transition-all">
@@ -174,7 +195,10 @@
     <!-- Bottom Section: Recent Transactions -->
     <div class="flex flex-col gap-4">
         <div class="flex items-center justify-between">
-            <h3 class="text-lg font-bold text-text-main dark:text-white">Transaction History</h3>
+            <div class="flex items-center gap-2">
+                <h3 class="text-lg font-bold text-text-main dark:text-white">Transaction History</h3>
+                <x-tooltip text="Complete list of all transactions for the selected month. Click on attachments to view receipts and supporting documents." />
+            </div>
         </div>
         <div class="overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shadow-sm">
             <table class="w-full text-left text-sm">

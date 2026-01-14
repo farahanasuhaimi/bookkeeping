@@ -60,6 +60,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/categories', [\App\Http\Controllers\SettingsController::class, 'categories'])->name('categories');
         Route::post('/categories', [\App\Http\Controllers\SettingsController::class, 'storeCategory'])->name('categories.store');
         Route::delete('/categories/{id}', [\App\Http\Controllers\SettingsController::class, 'destroyCategory'])->name('categories.destroy');
+        Route::get('/preferences', [\App\Http\Controllers\SettingsController::class, 'preferences'])->name('preferences');
+        Route::patch('/preferences', [\App\Http\Controllers\SettingsController::class, 'updatePreferences'])->name('preferences.update');
     });
 
     // Admin Routes

@@ -127,4 +127,23 @@ class SettingsController extends Controller
 
         return back()->with('success', 'Category deleted successfully.');
     }
+
+    public function preferences()
+    {
+        return view('settings.preferences', [
+            'user' => Auth::user(),
+            'active_tab' => 'preferences'
+        ]);
+    }
+
+    public function updatePreferences(Request $request)
+    {
+        $user = Auth::user();
+
+        $user->update([
+            'show_tooltips' => $request->has('show_tooltips'),
+        ]);
+
+        return back()->with('success', 'Preferences updated successfully.');
+    }
 }
