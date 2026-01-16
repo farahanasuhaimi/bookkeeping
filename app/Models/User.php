@@ -22,6 +22,8 @@ class User extends Authenticatable
         'password',
         'is_admin',
         'plan',
+        'show_tooltips',
+        'tooltip_settings',
     ];
 
     /**
@@ -44,6 +46,24 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'show_tooltips' => 'boolean',
+            'tooltip_settings' => 'array',
         ];
+    }
+
+    /**
+     * Check if tooltips should be shown for a specific page.
+     */
+    public function shouldShowTooltip($page): bool
+    {
+        if (!$this->show_tooltips) {
+            return false;
+        }
+
+        if (empty($this->tooltip_settings)) {
+            return true;
+        }
+
+        return $this->tooltip_settings[$page] ?? true;
     }
 }

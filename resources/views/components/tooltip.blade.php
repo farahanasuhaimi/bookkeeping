@@ -1,8 +1,21 @@
-@props(['text'])
+@props(['text', 'page' => null])
 
-@if(auth()->check() && auth()->user()->show_tooltips)
+@php
+    // Detect page key from route if not provided
+    $page = $page ?? match(true) {
+        request()->routeIs('dashboard') => 'dashboard',
+        request()->routeIs('incomes.*') => 'income',
+        request()->routeIs('expenses.*') => 'expense',
+        request()->routeIs('tax-summary*') => 'tax_summary',
+        request()->routeIs('saving-tracking*', 'savings-goals.*') => 'savings',
+        request()->routeIs('import.*') => 'import',
+        default => null
+    };
+@endphp
+
+@if(auth()->check() && auth()->user()->shouldShowTooltip($page))
 <div class="group relative inline-flex items-center">
-    <span class="material-symbols-outlined text-[16px] text-text-muted dark:text-gray-500 opacity-50 hover:opacity-100 transition-opacity duration-200 cursor-help">
+    <span class="material-symbols-outlined text-[12px] text-text-muted dark:text-gray-500 opacity-50 hover:opacity-100 transition-opacity duration-200 cursor-help">
         info
     </span>
     <span class="invisible group-hover:visible opacity-0 group-hover:opacity-100 absolute z-[1000] bg-slate-800 dark:bg-slate-700 text-slate-100 text-left px-3 py-2 rounded-lg text-xs font-medium leading-relaxed w-max max-w-[250px] sm:max-w-[250px] bottom-[125%] left-1/2 -translate-x-1/2 transition-all duration-300 shadow-lg pointer-events-none

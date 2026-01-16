@@ -140,8 +140,15 @@ class SettingsController extends Controller
     {
         $user = Auth::user();
 
+        $pages = ['dashboard', 'income', 'expense', 'tax_summary', 'savings', 'import'];
+        $tooltipSettings = [];
+        foreach ($pages as $page) {
+            $tooltipSettings[$page] = $request->has("tooltip_settings.$page");
+        }
+
         $user->update([
             'show_tooltips' => $request->has('show_tooltips'),
+            'tooltip_settings' => $tooltipSettings,
         ]);
 
         return back()->with('success', 'Preferences updated successfully.');

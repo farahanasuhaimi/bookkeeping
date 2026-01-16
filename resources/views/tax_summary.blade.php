@@ -314,7 +314,7 @@
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-1">
                                 <span class="text-sm text-text-muted dark:text-gray-400">Less: PCB Paid (MTD)</span>
-                                <span class="material-symbols-outlined text-[16px] text-text-muted cursor-help" title="Potongan Cukai Berjadual deducted from your monthly salary">help</span>
+                                <x-tooltip text="Potongan Cukai Berjadual (PCB) is the monthly tax deduction from your salary." />
                             </div>
                             <span class="font-medium text-green-600 dark:text-green-400">- RM {{ number_format($pcbPaid, 2) }}</span>
                         </div>

@@ -26,25 +26,58 @@
             @method('PATCH')
             
             <!-- Show Tooltips Toggle -->
-            <div class="flex items-start justify-between p-5 rounded-2xl bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark">
-                <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-1">
-                        <label for="show_tooltips" class="text-sm font-bold text-text-main dark:text-white cursor-pointer">
-                            Show Tooltips
-                        </label>
-                        <span class="material-symbols-outlined text-[16px] text-primary">help</span>
+            <div class="space-y-4">
+                <div class="flex items-start justify-between p-5 rounded-2xl bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <label for="show_tooltips" class="text-sm font-bold text-text-main dark:text-white cursor-pointer">
+                                Show Tooltips
+                            </label>
+                            <span class="material-symbols-outlined text-[16px] text-primary">help</span>
+                        </div>
+                        <p class="text-xs text-text-muted dark:text-gray-400 leading-relaxed">
+                            Display helpful information icons throughout the app. Hover over these icons to see explanations of features, metrics, and functionality.
+                        </p>
                     </div>
-                    <p class="text-xs text-text-muted dark:text-gray-400 leading-relaxed">
-                        Display helpful information icons throughout the app. Hover over these icons to see explanations of features, metrics, and functionality.
-                    </p>
+                    <div class="ml-4">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="show_tooltips" id="show_tooltips" value="1" 
+                                {{ old('show_tooltips', $user->show_tooltips) ? 'checked' : '' }}
+                                class="sr-only peer"
+                                onchange="document.getElementById('tooltip_pages_container').classList.toggle('hidden', !this.checked); document.getElementById('tooltip_pages_container').classList.toggle('opacity-50', !this.checked); document.getElementById('tooltip_pages_container').classList.toggle('pointer-events-none', !this.checked)">
+                            <div class="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
                 </div>
-                <div class="ml-4">
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" name="show_tooltips" id="show_tooltips" value="1" 
-                            {{ old('show_tooltips', $user->show_tooltips) ? 'checked' : '' }}
-                            class="sr-only peer">
-                        <div class="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                    </label>
+
+                <!-- Per-Page Tooltip Settings -->
+                <div id="tooltip_pages_container" class="space-y-4 ml-0 sm:ml-8 {{ old('show_tooltips', $user->show_tooltips) ? '' : 'hidden opacity-50 pointer-events-none' }} transition-all duration-300">
+                    <p class="text-[10px] font-black uppercase text-text-muted tracking-widest pl-2">Specific Page Visibility</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        @php
+                            $pages = [
+                                'dashboard' => 'Dashboard',
+                                'income' => 'Income Records',
+                                'expense' => 'Expense Records',
+                                'tax_summary' => 'Tax Summary',
+                                'savings' => 'Savings Goals',
+                                'import' => 'Data Import'
+                            ];
+                        @endphp
+                        @foreach($pages as $key => $label)
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
+                            <label for="tooltip_{{ $key }}" class="text-xs font-bold text-text-muted dark:text-gray-400">
+                                {{ $label }}
+                            </label>
+                            <label class="relative inline-flex items-center cursor-pointer scale-75">
+                                <input type="checkbox" name="tooltip_settings[{{ $key }}]" id="tooltip_{{ $key }}" value="1" 
+                                    {{ old("tooltip_settings.$key", $user->tooltip_settings[$key] ?? true) ? 'checked' : '' }}
+                                    class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
