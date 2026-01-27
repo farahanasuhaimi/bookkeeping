@@ -22,7 +22,10 @@
             <div class="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                 <span class="material-symbols-outlined text-8xl text-primary">account_balance_wallet</span>
             </div>
-            <p class="text-xs font-black uppercase tracking-widest text-text-muted mb-4 italic">Total Combined Savings</p>
+            <div class="flex items-center gap-2 mb-4">
+                <p class="text-xs font-black uppercase tracking-widest text-text-muted italic">Total Combined Savings</p>
+                <x-tooltip text="The sum of your tax-relief eligible savings (like EPF) and your personal savings goals." />
+            </div>
             <div class="flex items-baseline gap-1">
                 <span class="text-sm font-bold text-text-muted">RM</span>
                 <p class="text-4xl font-black text-text-main dark:text-white">{{ number_format($taxSavingsTotal + $totalGoalSavings, 2) }}</p>
@@ -35,7 +38,10 @@
             <div class="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                 <span class="material-symbols-outlined text-8xl text-blue-500">work_history</span>
             </div>
-            <p class="text-xs font-black uppercase tracking-widest text-text-muted mb-4 italic">YTD EPF (KWSP)</p>
+            <div class="flex items-center gap-2 mb-4">
+                <p class="text-xs font-black uppercase tracking-widest text-text-muted italic">YTD EPF (KWSP)</p>
+                <x-tooltip text="Your Year-to-Date EPF contributions. This amount can be claimed for tax relief up to RM 4,000 per year." />
+            </div>
             <div class="flex items-baseline gap-1">
                 <span class="text-sm font-bold text-text-muted">RM</span>
                 <p class="text-4xl font-black text-text-main dark:text-white">{{ number_format($ytdEpf, 2) }}</p>
@@ -48,7 +54,10 @@
             <div class="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
                 <span class="material-symbols-outlined text-8xl text-amber-500">volunteer_activism</span>
             </div>
-            <p class="text-xs font-black uppercase tracking-widest text-text-muted mb-4 italic">YTD Zakat Total</p>
+            <div class="flex items-center gap-2 mb-4">
+                <p class="text-xs font-black uppercase tracking-widest text-text-muted italic">YTD Zakat Total</p>
+                <x-tooltip text="Total Zakat paid this year. This provides a direct tax rebate (1-to-1 reduction of tax payable)." />
+            </div>
             <div class="flex items-baseline gap-1">
                 <span class="text-sm font-bold text-text-muted">RM</span>
                 <p class="text-4xl font-black text-text-main dark:text-white">{{ number_format($ytdZakat, 2) }}</p>
@@ -64,6 +73,7 @@
             <div class="flex items-center gap-3 mb-6">
                 <span class="material-symbols-outlined text-primary font-bold">verified_user</span>
                 <h3 class="text-xl font-black text-text-main dark:text-white italic">Tax Relief Progress</h3>
+                <x-tooltip text="Visual progress of your tax relief utilization. Maximize these reliefs to reduce your taxable income." />
             </div>
             
             <div class="space-y-8 bg-surface-light dark:bg-surface-dark rounded-[2rem] p-8 border border-border-light dark:border-border-dark shadow-sm">
@@ -119,6 +129,7 @@
             <div class="flex items-center gap-3 mb-6">
                 <span class="material-symbols-outlined text-primary font-bold">flag</span>
                 <h3 class="text-xl font-black text-text-main dark:text-white italic">Financial Goals</h3>
+                <x-tooltip text="Set and track custom savings targets for things like a house, car, or emergency fund." />
             </div>
 
             <div class="space-y-4">
@@ -177,6 +188,7 @@
             <h3 class="text-xl font-black text-text-main dark:text-white italic flex items-center gap-3">
                 <span class="material-symbols-outlined text-primary font-bold">history</span>
                 Recent Relief Contributions
+                <x-tooltip text="A log of your recent transactions that qualify for tax reliefs, such as insurance payments or book purchases." />
             </h3>
         </div>
         <div class="overflow-x-auto">

@@ -3,7 +3,10 @@
 @section('dashboard-content')
 <div class="px-6 py-12 max-w-4xl mx-auto">
     <div class="mb-8">
-        <h2 class="text-3xl font-black text-text-main dark:text-white mb-2 italic">Import Bank Statement</h2>
+        <div class="flex items-center gap-2 mb-2">
+            <h2 class="text-3xl font-black text-text-main dark:text-white italic">Import Bank Statement</h2>
+            <x-tooltip text="Bulk import transactions from your bank's CSV export file. We'll help you map the columns in the next step." />
+        </div>
         <p class="text-text-muted dark:text-gray-400">Upload your CSV file to automatically populate your records.</p>
     </div>
 
@@ -11,7 +14,10 @@
         <form action="{{ route('import.preview') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="mb-8">
-                <label class="block text-sm font-bold text-text-main dark:text-white mb-4">Select CSV File</label>
+                <div class="flex items-center gap-2 mb-4">
+                    <label class="block text-sm font-bold text-text-main dark:text-white">Select CSV File</label>
+                    <x-tooltip text="Supported formats: .csv, .txt. Ensure your file has columns for Date, Description, and Amount." />
+                </div>
                 <div class="relative group">
                     <input type="file" name="csv_file" accept=".csv,.txt" required
                         class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">

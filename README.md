@@ -35,6 +35,16 @@
 - **Chargeable Income Calculation**: Detailed breakdown of statutory income and reliefs.
 - **Relief Optimization**: Real-time tracking of individual, lifestyle, and medical relief quotas.
 - **Tax Payable Estimation**: Estimates your net tax payable based on current Malaysian tax brackets.
+- **Pro Exports**: One-click PDF reports and Excel exports for LHDN audit readiness (Pro Feature).
+
+### 8. **Educational Tooltip System**
+- **Simplified Terminology**: Intelligent tooltips explaining complex tax terms (e.g., PCB, Chargeable Income).
+- **Context-Aware Help**: Integrated throughout the dashboard to guide users during data entry.
+- **Toggle Preferences**: Users can enable/disable tooltips via the settings menu.
+
+### 9. **Pro Tier Ecosystem**
+- **Feature Management**: Tier-based access control for advanced tools like PDF reporting and income forecasting.
+- **Administrative Control**: Robust admin dashboard for managing users and upgrading accounts.
 
 ### 7. **Bank Statement Import**
 - **Smart Mapping**: Intelligent interface to map CSV columns from any bank.
@@ -57,10 +67,13 @@
 ## 🔄 Recent Updates (Jan 2026)
 
 - **UI/UX Overhaul**: Implemented a globally accessible Transaction Modal and Mobile FAB.
-- **Mobile Optimization**: fixed mobile navigation with a responsive hamburger menu and sidebar.
+- **Mobile Optimization**: Fixed mobile navigation with a responsive hamburger menu and sidebar.
 - **Analytics Engine**: Deployed Chart.js powered visual analytics for yearly trends.
 - **Savings Module**: Launched the dedicated Savings & Goal Tracking feature.
 - **Settings System**: Built a robust settings module for managing dynamic app data.
+- **PDF Reporting Engine**: Deployed one-click tax report generation (YA 2026 compliant).
+- **Pro Ecosystem**: Implemented Plan-based feature locking and user tier management.
+- **Smart Tooltips**: Integrated an educational tooltip system across the application.
 
 ---
 
@@ -69,7 +82,7 @@
 - [ ] **[CHIP-asia.com](https://www.chip-in.asia/) Integration**: Implement automated subscription payments for Pro accounts (In Progress).
 - [x] **Savings Tracker**: Implement the projected savings module to help users meet long-term financial goals.
 - [ ] **AI Receipt Parsing**: (Experimental) Automated data extraction from uploaded receipt images.
-- [ ] **PDF Reporting**: Generate one-click tax reports for easy LHDN e-Filing reference.
+- [x] **PDF Reporting**: Generate one-click tax reports for easy LHDN e-Filing reference.
 - [ ] **Multi-Currency Support**: Support for freelancers working with international clients.
 
 ---

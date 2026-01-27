@@ -49,6 +49,7 @@
                         <span class="material-symbols-outlined text-xl">payments</span>
                     </div>
                     <p class="text-text-muted dark:text-gray-400 text-sm font-medium">Total Gross Income</p>
+                    <x-tooltip text="All your registered income sources for the year before any deductions." />
                 </div>
                 <p class="text-text-main dark:text-white text-2xl font-bold tracking-tight">RM {{ number_format($totalIncome, 2) }}</p>
                 <div class="flex items-center text-xs text-green-600 dark:text-green-400 mt-1">
@@ -63,6 +64,7 @@
                         <span class="material-symbols-outlined text-xl">verified</span>
                     </div>
                     <p class="text-text-muted dark:text-gray-400 text-sm font-medium">Approved Reliefs</p>
+                    <x-tooltip text="Total reliefs claimed (Lifestyle, Insurance, etc.) that reduce your taxable income." />
                 </div>
                 <p class="text-text-main dark:text-white text-2xl font-bold tracking-tight">RM {{ number_format($totalReliefs, 2) }}</p>
                 <div class="flex items-center text-xs text-text-muted dark:text-gray-500 mt-1">
@@ -76,6 +78,7 @@
                         <span class="material-symbols-outlined text-xl">account_balance_wallet</span>
                     </div>
                     <p class="text-text-muted dark:text-gray-400 text-sm font-medium">Chargeable Income</p>
+                    <x-tooltip text="Your final taxable income after subtracting all approved reliefs and donations." />
                 </div>
                 <p class="text-text-main dark:text-white text-2xl font-bold tracking-tight">RM {{ number_format($chargeableIncome, 2) }}</p>
                 <div class="flex items-center text-xs text-orange-600 dark:text-orange-400 mt-1">
@@ -92,6 +95,7 @@
                         <span class="material-symbols-outlined text-xl">gavel</span>
                     </div>
                     <p class="text-text-main dark:text-white text-sm font-bold">Net Tax Payable</p>
+                    <x-tooltip text="The final tax amount you owe to LHDN for this assessment year." />
                 </div>
                 <p class="text-text-main dark:text-white text-2xl font-black tracking-tight relative z-10">RM {{ number_format($netTaxPayable, 2) }}</p>
                 <div class="flex items-center text-xs text-text-muted dark:text-gray-400 mt-1 relative z-10">
@@ -112,7 +116,10 @@
                                     <span class="material-symbols-outlined text-lg">work</span>
                                 </div>
                                 <div>
-                                    <p class="text-text-main dark:text-white text-sm font-bold">Section A: Statutory Income</p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-text-main dark:text-white text-sm font-bold">Section A: Statutory Income</p>
+                                        <x-tooltip text="Income from all sources including employment, business, and investments." />
+                                    </div>
                                     <p class="text-text-muted dark:text-gray-400 text-xs">Employment, Business, Dividends, Rents</p>
                                 </div>
                             </div>
@@ -182,7 +189,10 @@
                                     <span class="material-symbols-outlined text-lg">volunteer_activism</span>
                                 </div>
                                 <div>
-                                    <p class="text-text-main dark:text-white text-sm font-bold">Section B: Donations &amp; Zakat</p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-text-main dark:text-white text-sm font-bold">Section B: Donations &amp; Zakat</p>
+                                        <x-tooltip text="Approved donations and Zakat payments that reduce your aggregate income." />
+                                    </div>
                                     <p class="text-text-muted dark:text-gray-400 text-xs">Approved Donations, Gifts, Zakat Fitrah</p>
                                 </div>
                             </div>
@@ -212,7 +222,10 @@
                                     <span class="material-symbols-outlined text-lg">medical_services</span>
                                 </div>
                                 <div>
-                                    <p class="text-text-main dark:text-white text-sm font-bold">Section C: Tax Reliefs</p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-text-main dark:text-white text-sm font-bold">Section C: Tax Reliefs</p>
+                                        <x-tooltip text="Personal reliefs and deductions that lower your chargeable income." />
+                                    </div>
                                     <p class="text-text-muted dark:text-gray-400 text-xs">Lifestyle, Insurance, EPF, Parenthood</p>
                                 </div>
                             </div>
