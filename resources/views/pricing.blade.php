@@ -40,9 +40,15 @@
                 </li>
             </ul>
 
-            <button class="w-full bg-primary hover:bg-primary/90 text-text-main font-black py-4 rounded-2xl transition-all hover:scale-[1.02]">
-                UPGRADE MONTHLY
-            </button>
+            @auth
+                <a href="{{ auth()->user()->checkout('PLACEHOLDER_MONTHLY_VARIANT_ID') }}" class="block w-center text-center bg-primary hover:bg-primary/90 text-text-main font-black py-4 rounded-2xl transition-all hover:scale-[1.02]">
+                    UPGRADE MONTHLY
+                </a>
+            @else
+                <a href="{{ route('register') }}" class="block w-center text-center bg-primary hover:bg-primary/90 text-text-main font-black py-4 rounded-2xl transition-all hover:scale-[1.02]">
+                    UPGRADE MONTHLY
+                </a>
+            @endauth
         </div>
 
         <!-- Yearly Plan -->
@@ -79,9 +85,15 @@
                 </li>
             </ul>
 
-            <button class="w-full bg-primary hover:bg-primary/90 text-text-main font-black py-4 rounded-2xl transition-all hover:scale-[1.02] shadow-xl shadow-primary/20">
-                UPGRADE YEARLY
-            </button>
+            @auth
+                <a href="{{ auth()->user()->checkout('PLACEHOLDER_YEARLY_VARIANT_ID') }}" class="block w-center text-center bg-primary hover:bg-primary/90 text-text-main font-black py-4 rounded-2xl transition-all hover:scale-[1.02] shadow-xl shadow-primary/20">
+                    UPGRADE YEARLY
+                </a>
+            @else
+                <a href="{{ route('register') }}" class="block w-center text-center bg-primary hover:bg-primary/90 text-text-main font-black py-4 rounded-2xl transition-all hover:scale-[1.02] shadow-xl shadow-primary/20">
+                    UPGRADE YEARLY
+                </a>
+            @endauth
         </div>
     </div>
 
@@ -95,7 +107,7 @@
             </div>
             <div class="p-6 bg-surface-light dark:bg-surface-dark rounded-2xl border border-border-light dark:border-border-dark">
                 <h4 class="font-bold text-text-main dark:text-white mb-2 italic">Is my data secure?</h4>
-                <p class="text-sm text-text-muted dark:text-gray-400">Absolutely. We use industry-standard encryption and secure payment processing via CHIP.io to ensure your financial data is protected.</p>
+                <p class="text-sm text-text-muted dark:text-gray-400">Absolutely. We use industry-standard encryption and secure payment processing via Lemon Squeezy to ensure your financial data is protected.</p>
             </div>
         </div>
     </div>

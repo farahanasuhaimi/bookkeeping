@@ -100,12 +100,12 @@
             <div>
                 <label for="attachment" class="block text-sm font-medium text-text-main dark:text-white mb-2 flex items-center gap-2">
                     Receipt / Attachment (Optional)
-                    @if(auth()->user()->plan != 'pro')
+                    @if(!auth()->user()->subscribed())
                         <span class="inline-flex items-center rounded-md bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400 ring-1 ring-inset ring-amber-600/20">PRO</span>
                     @endif
                 </label>
                 
-                @if(auth()->user()->plan == 'pro')
+                @if(auth()->user()->subscribed())
                     <input type="file" id="attachment" name="attachment" accept="image/*,.pdf" class="block w-full text-sm text-text-muted dark:text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
                     <p class="mt-1 text-xs text-text-muted dark:text-gray-500">Max 10MB. Images or PDF.</p>
                 @else
