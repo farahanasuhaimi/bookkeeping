@@ -7,38 +7,46 @@ use Illuminate\Database\Seeder;
 
 class CategorySeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Income Categories (IDs 1-2 based on view hardcoding)
-        Category::firstOrCreate(['id' => 1], ['name' => 'Official Employment', 'type' => 'income']);
-        Category::firstOrCreate(['id' => 2], ['name' => 'Part-time / Business', 'type' => 'income']);
-        Category::firstOrCreate(['id' => 18], ['name' => 'Rental Income', 'type' => 'income']);
-        Category::firstOrCreate(['id' => 19], ['name' => 'Dividends / Interest', 'type' => 'income']);
+        $categories = [
+            // Income
+            ['slug' => 'employment-income',  'name' => 'Official Employment',      'type' => 'income'],
+            ['slug' => 'part-time-business', 'name' => 'Part-time / Business',     'type' => 'income'],
+            ['slug' => 'rental-income',      'name' => 'Rental Income',            'type' => 'income'],
+            ['slug' => 'dividends-interest', 'name' => 'Dividends / Interest',     'type' => 'income'],
 
-        // Expense Categories (General)
-        $expenses = [
-            3 => 'Housing',
-            4 => 'Transport',
-            5 => 'Lifestyle',
-            6 => 'Food & Dining',
-            7 => 'Utilities',
-            8 => 'Equipment',
-            9 => 'Professional Services',
-            10 => 'Other',
-            11 => 'Entertainment',
-            12 => 'EPF Contribution',
-            13 => 'Zakat',
-            14 => 'Life Insurance',
-            15 => 'Medical Insurance',
-            16 => 'SSPN Savings',
-            17 => 'PRS (Private Retirement)'
+            // Expense — general
+            ['slug' => null, 'name' => 'Housing',              'type' => 'expense'],
+            ['slug' => null, 'name' => 'Transport',            'type' => 'expense'],
+            ['slug' => null, 'name' => 'Food & Dining',        'type' => 'expense'],
+            ['slug' => null, 'name' => 'Utilities',            'type' => 'expense'],
+            ['slug' => null, 'name' => 'Equipment',            'type' => 'expense'],
+            ['slug' => null, 'name' => 'Professional Services','type' => 'expense'],
+            ['slug' => null, 'name' => 'Other',                'type' => 'expense'],
+            ['slug' => null, 'name' => 'Entertainment',        'type' => 'expense'],
+
+            // Expense — tax-relevant (slugs required)
+            ['slug' => 'lifestyle',          'name' => 'Lifestyle',                'type' => 'expense'],
+            ['slug' => 'epf-contribution',   'name' => 'EPF Contribution',         'type' => 'expense'],
+            ['slug' => 'zakat',              'name' => 'Zakat',                    'type' => 'expense'],
+            ['slug' => 'life-insurance',     'name' => 'Life Insurance',           'type' => 'expense'],
+            ['slug' => 'medical-insurance',  'name' => 'Medical Insurance',        'type' => 'expense'],
+            ['slug' => 'sspn-savings',       'name' => 'SSPN Savings',             'type' => 'expense'],
+            ['slug' => 'prs-retirement',     'name' => 'PRS (Private Retirement)', 'type' => 'expense'],
         ];
 
-        foreach ($expenses as $id => $name) {
-            Category::firstOrCreate(['id' => $id], ['name' => $name, 'type' => 'expense']);
+        foreach ($categories as $data) {
+            if ($data['slug']) {
+                Category::firstOrCreate(
+                    ['slug' => $data['slug']],
+                    ['name' => $data['name'], 'type' => $data['type']]
+                );
+            } else {
+                Category::firstOrCreate(
+                    ['name' => $data['name'], 'type' => $data['type'], 'user_id' => null]
+                );
+            }
         }
     }
 }
