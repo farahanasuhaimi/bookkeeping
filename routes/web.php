@@ -8,6 +8,7 @@ use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\TaxSummaryController;
 use App\Http\Controllers\SavingsController;
+use App\Http\Controllers\ImportController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -44,9 +45,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('savings-goals', SavingsController::class)->except(['index', 'show', 'create', 'edit']);
 
     // Import Routes
-    Route::get('/import', [\App\Http\Controllers\ImportController::class, 'index'])->name('import.index');
-    Route::post('/import/preview', [\App\Http\Controllers\ImportController::class, 'preview'])->name('import.preview');
-    Route::post('/import/store', [\App\Http\Controllers\ImportController::class, 'store'])->name('import.store');
+    Route::get('/import', [ImportController::class, 'index'])->name('import.index');
+    Route::post('/import/preview', [ImportController::class, 'preview'])->name('import.preview');
+    Route::post('/import/store', [ImportController::class, 'store'])->name('import.store');
+    Route::post('/import/ai-suggest', [ImportController::class, 'aiSuggest'])->name('import.ai-suggest');
 
     // Settings Routes
     Route::prefix('settings')->name('settings.')->group(function () {

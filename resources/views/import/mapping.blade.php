@@ -68,6 +68,35 @@
                     </div>
                 </div>
 
+                <div class="bg-surface-light dark:bg-surface-dark rounded-3xl p-6 border border-border-light dark:border-border-dark shadow-sm">
+                    <h3 class="text-lg font-bold text-text-main dark:text-white mb-4 italic">Accuracy & AI Assist</h3>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-text-muted">Auto-mapping confidence</p>
+                        <span class="text-xs font-bold px-2.5 py-1 rounded-full {{ $overallConfidence >= 70 ? 'bg-green-100 text-green-700' : ($overallConfidence >= 50 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700') }}">
+                            {{ $overallConfidence }}%
+                        </span>
+                    </div>
+                    <p class="text-[10px] text-text-muted mt-2 italic">Low confidence? Consider AI assist, then review before import.</p>
+
+                    <div class="mt-5">
+                        <label class="flex items-center gap-3 cursor-pointer group">
+                            <div class="relative flex items-center">
+                                <input type="checkbox" id="aiAssistToggle" class="h-5 w-5 rounded border-border-light dark:border-border-dark border-2 bg-transparent text-primary checked:bg-primary checked:border-primary focus:ring-0 focus:ring-offset-0 focus:outline-none transition-colors cursor-pointer">
+                            </div>
+                            <span class="text-sm font-medium text-text-main dark:text-gray-300 group-hover:text-primary transition-colors">Enable AI assist (DeepSeek)</span>
+                        </label>
+                        <p class="text-[10px] text-text-muted mt-2 italic">Sends headers + sample rows to DeepSeek to suggest a mapping.</p>
+                    </div>
+
+                    <button type="button" id="aiAssistBtn" class="mt-4 w-full bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-black py-3 rounded-xl transition-all hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed">
+                        GET AI MAPPING
+                    </button>
+                    <p id="aiAssistStatus" class="text-[10px] text-text-muted mt-2 italic"></p>
+                    @if(!$aiAvailable)
+                        <p class="text-[10px] text-red-600 mt-2 italic">AI assist disabled: set DEEPSEEK_API_KEY in your .env.</p>
+                    @endif
+                </div>
+
                 <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-text-main font-black py-4 rounded-xl transition-all hover:scale-[1.01] flex items-center justify-center gap-2 italic">
                     <span class="material-symbols-outlined">data_saver_on</span>
                     <span>COMMIT IMPORT</span>
@@ -83,16 +112,22 @@
                             <thead class="bg-background-light/50 dark:bg-background-dark/50 border-b border-border-light dark:border-border-dark">
                                 <tr>
                                     @foreach($rows[0] as $index => $cell)
+                                    @php
+                                        $selectedMapping = $suggestedMapping[$index] ?? '';
+                                        $confidence = $confidenceByIndex[$index] ?? ['label' => 'Low', 'score' => 0];
+                                        $confidenceClass = $confidence['label'] === 'High' ? 'text-green-700' : ($confidence['label'] === 'Medium' ? 'text-amber-700' : 'text-red-600');
+                                    @endphp
                                     <th class="px-4 py-4">
                                         <select name="mapping[{{ $index }}]" 
                                             class="w-full text-xs font-bold rounded-lg border-border-light dark:border-border-dark bg-white dark:bg-background-dark focus:border-primary focus:ring-primary">
-                                            <option value="">Ignore</option>
-                                            <option value="date" {{ stripos($cell, 'date') !== false ? 'selected' : '' }}>Row: Date</option>
-                                            <option value="description" {{ stripos($cell, 'desc') !== false || stripos($cell, 'trans') !== false ? 'selected' : '' }}>Row: Description</option>
-                                            <option value="amount" {{ stripos($cell, 'amt') !== false || stripos($cell, 'amount') !== false ? 'selected' : '' }}>Row: Amount (+/-)</option>
-                                            <option value="amount_credit" {{ stripos($cell, 'credit') !== false || stripos($cell, 'deposit') !== false ? 'selected' : '' }}>Row: Credit (In)</option>
-                                            <option value="amount_debit" {{ stripos($cell, 'debit') !== false || stripos($cell, 'withdrawal') !== false ? 'selected' : '' }}>Row: Debit (Out)</option>
+                                            <option value="" {{ $selectedMapping === '' ? 'selected' : '' }}>Ignore</option>
+                                            <option value="date" {{ $selectedMapping === 'date' ? 'selected' : '' }}>Row: Date</option>
+                                            <option value="description" {{ $selectedMapping === 'description' ? 'selected' : '' }}>Row: Description</option>
+                                            <option value="amount" {{ $selectedMapping === 'amount' ? 'selected' : '' }}>Row: Amount (+/-)</option>
+                                            <option value="amount_credit" {{ $selectedMapping === 'amount_credit' ? 'selected' : '' }}>Row: Credit (In)</option>
+                                            <option value="amount_debit" {{ $selectedMapping === 'amount_debit' ? 'selected' : '' }}>Row: Debit (Out)</option>
                                         </select>
+                                        <p class="mt-1 text-[10px] {{ $confidenceClass }}">Confidence: {{ $confidence['label'] }}</p>
                                     </th>
                                     @endforeach
                                 </tr>
@@ -116,4 +151,49 @@
         </div>
     </form>
 </div>
+
+<script>
+    (function () {
+        const aiAvailable = @json($aiAvailable);
+        const aiToggle = document.getElementById('aiAssistToggle');
+        const aiButton = document.getElementById('aiAssistBtn');
+        const aiStatus = document.getElementById('aiAssistStatus');
+        const tempPath = @json($temp_path);
+
+        function setButtonState() {
+            const enabled = aiToggle.checked && aiAvailable;
+            aiButton.disabled = !enabled;
+        }
+
+        aiToggle.addEventListener('change', setButtonState);
+        setButtonState();
+
+        aiButton.addEventListener('click', async () => {
+            aiStatus.textContent = 'Requesting AI mapping...';
+            try {
+                const response = await window.axios.post('{{ route('import.ai-suggest') }}', {
+                    temp_path: tempPath,
+                });
+
+                const mapping = response.data.mapping || {};
+                const selects = document.querySelectorAll('select[name^="mapping["]');
+                selects.forEach((select) => {
+                    const match = select.name.match(/mapping\[(\d+)\]/);
+                    if (!match) {
+                        return;
+                    }
+                    const index = match[1];
+                    if (mapping.hasOwnProperty(index)) {
+                        select.value = mapping[index];
+                    }
+                });
+
+                aiStatus.textContent = 'AI mapping applied. Please review before committing.';
+            } catch (error) {
+                const message = error?.response?.data?.message || 'AI mapping failed. Please try again.';
+                aiStatus.textContent = message;
+            }
+        });
+    })();
+</script>
 @endsection
